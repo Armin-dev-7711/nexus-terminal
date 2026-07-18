@@ -19,7 +19,7 @@ export function FAQSection() {
       ref={sectionRef}
       className='w-full py-24 md:py-32 relative bg-[#050507] overflow-hidden flex flex-col items-center justify-center'
     >
-      <div className='absolute inset-0 z-0 pointer-events-none overflow-hidden [mask-image:linear-gradient(to_bottom,transparent_0%,black_10%,black_90%,transparent_100%)]'>
+      <div className='hidden md:block absolute inset-0 z-0 pointer-events-none overflow-hidden [mask-image:linear-gradient(to_bottom,transparent_0%,black_10%,black_90%,transparent_100%)]'>
         <div className="absolute inset-0 opacity-[0.03] mix-blend-screen bg-[url('data:image/svg+xml,%3Csvg width=\'60\' height=\'60\' viewBox=\'0 0 60 60\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cpath d=\'M 60 0 L 0 0 0 60\' fill=\'none\' stroke=\'white\' strokeWidth=\'1\'/%3E%3C/svg%3E')]" />
 
         {isInView && (

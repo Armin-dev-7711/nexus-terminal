@@ -45,7 +45,7 @@ export function DashboardPreviewSection() {
           <motion.div
             animate={{ opacity: [0.15, 0.25, 0.15], scale: [1, 1.1, 1] }}
             transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
-            className='absolute w-[600px] h-[600px] bg-primary/40 rounded-full blur-[120px] translate-x-[-60%] translate-y-[-10%] transform-gpu'
+            className='hidden md:absolute absolute w-[600px] h-[600px] bg-primary/40 rounded-full blur-[120px] translate-x-[-60%] translate-y-[-10%] transform-gpu'
           />
           <motion.div
             animate={{ opacity: [0.1, 0.2, 0.1], scale: [1, 1.05, 1] }}
@@ -55,7 +55,7 @@ export function DashboardPreviewSection() {
               ease: "easeInOut",
               delay: 1,
             }}
-            className='absolute w-[500px] h-[500px] bg-blue-500/50 rounded-full blur-[120px] translate-x-[30%] translate-y-[70%] transform-gpu'
+            className='hidden md:absolute absolute w-[500px] h-[500px] bg-blue-500/50 rounded-full blur-[120px] translate-x-[30%] translate-y-[70%] transform-gpu'
           />
           <motion.div
             animate={{ opacity: [0.2, 0.28, 0.21, 0.3, 0.2] }}
@@ -65,7 +65,7 @@ export function DashboardPreviewSection() {
               ease: "easeInOut",
               delay: 2,
             }}
-            className='absolute w-[700px] h-[400px] bg-emerald-500/50 rounded-full blur-[150px] transform-gpu'
+            className='hidden md:absolute absolute w-[700px] h-[400px] bg-emerald-500/50 rounded-full blur-[150px] transform-gpu'
           />
         </div>
       )}

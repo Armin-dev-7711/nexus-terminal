@@ -44,7 +44,6 @@ export function PricingCard({
 
   React.useEffect(() => {
     if (!plan.metricTarget || !isSectionInView) return;
-
     const interval = setInterval(() => {
       setLiveCounter((prev) => prev + Math.floor(Math.random() * 3) + 1);
     }, 4000);
@@ -62,8 +61,8 @@ export function PricingCard({
         },
       }}
       whileHover={plan.isHero ? { rotate: 2, scale: 1.03, y: -5 } : { y: -5 }}
-      // 🚀 Fixed: Reduce backdrop-blur intensity on mobile to make the initial render lighter
-      className={`relative rounded-3xl p-6 md:p-8 flex flex-col justify-between overflow-hidden bg-card/20 backdrop-blur-md md:backdrop-blur-xl border border-white/[0.06] shadow-[inset_0_1px_1px_rgba(255,255,255,0.15)] group transition-all duration-500 min-h-[550px] ${
+      // 🚀 فیکس شد: رنگ سالید در موبایل، بلر فقط در دسکتاپ
+      className={`relative rounded-3xl p-6 md:p-8 flex flex-col justify-between overflow-hidden bg-zinc-950 md:bg-card/20 backdrop-blur-none md:backdrop-blur-xl border border-white/[0.06] shadow-xl group transition-all duration-500 min-h-[550px] ${
         plan.isHero
           ? "lg:scale-105 z-10 border-primary/30 will-change-transform"
           : "z-0"
@@ -71,12 +70,16 @@ export function PricingCard({
     >
       {plan.isHero && isSectionInView && (
         <>
+          {/* 🚀 فیکس شد: انیمیشن سنگین فقط برای دسکتاپ، برای موبایل یک نور ثابتِ سبک قرار دادیم */}
           <motion.div
             animate={{ opacity: [0.2, 0.6, 0.2], scale: [1, 1.1, 1] }}
             transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
-            className='absolute inset-0 bg-gradient-to-b from-primary/20 via-transparent to-transparent pointer-events-none blur-xl md:blur-2xl transform-gpu'
+            className='hidden md:block absolute inset-0 bg-gradient-to-b from-primary/20 via-transparent to-transparent pointer-events-none blur-2xl transform-gpu'
           />
-          <div className='absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none z-0'>
+          <div className='md:hidden absolute inset-0 bg-gradient-to-b from-primary/10 via-transparent to-transparent pointer-events-none' />
+
+          {/* 🚀 فیکس شد: انیمیشن چرخشی پس‌زمینه (که در موبایل دیده نمی‌شود) غیرفعال شد */}
+          <div className='hidden md:block absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none z-0'>
             <motion.div
               animate={{ rotate: 360 }}
               transition={{ duration: 4, repeat: Infinity, ease: "linear" }}
@@ -87,21 +90,19 @@ export function PricingCard({
         </>
       )}
 
-      {/* Card header section */}
       <div className='relative z-10'>
         <div className='flex items-start justify-between mb-4'>
           <h3 className='text-lg font-black tracking-tight text-foreground group-hover:text-primary transition-colors duration-300 flex flex-col sm:flex-row sm:items-center gap-2'>
             {plan.name}
             {isActive && (
-              <span className='text-[10px]  font-normal border border-border/80 text-muted-foreground bg-background/50 px-2 py-0.5 rounded'>
+              <span className='text-[10px] font-normal border border-border/80 text-muted-foreground bg-background/50 px-2 py-0.5 rounded'>
                 Active Context
               </span>
             )}
           </h3>
-
           <div className='flex flex-col items-end gap-1.5 mt-0.5'>
             {billingPeriod === "annual" && plan.isHero && (
-              <span className='text-[9px] font-black tracking-widest uppercase px-2 py-0.5 rounded border bg-primary/10 text-primary border-primary/20 shadow-[0_0_10px_rgba(132,204,34,0.1)]'>
+              <span className='text-[9px] font-black tracking-widest uppercase px-2 py-0.5 rounded border bg-primary/10 text-primary border-primary/20'>
                 Save 32%
               </span>
             )}
@@ -117,7 +118,6 @@ export function PricingCard({
           {plan.description}
         </p>
 
-        {/* Price */}
         <div className='my-6 pt-4 border-t border-white/[0.04] flex items-baseline justify-between'>
           <div>
             {plan.basePriceMonthly === 0 ? (
@@ -133,7 +133,7 @@ export function PricingCard({
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: 10 }}
                     transition={{ duration: 0.3 }}
-                    className='text-4xl font-black  text-foreground'
+                    className='text-4xl font-black text-foreground'
                   >
                     {symbol}
                     {convertedPrice}
@@ -145,7 +145,6 @@ export function PricingCard({
               </div>
             )}
           </div>
-
           {plan.metricLabel && (
             <div className='text-right flex flex-col'>
               <span className='text-[13px] font-black text-primary'>
@@ -158,7 +157,6 @@ export function PricingCard({
           )}
         </div>
 
-        {/* Features */}
         <ul className='space-y-3 my-6'>
           {plan.features.map((feat, idx) => (
             <motion.li
@@ -167,15 +165,9 @@ export function PricingCard({
                 hidden: { opacity: 0, x: -5 },
                 visible: { opacity: 1, x: 0 },
               }}
-              className={`flex items-center gap-3 text-xs transition-all duration-500 ${
-                feat.included
-                  ? "text-foreground/90"
-                  : "text-muted-foreground/30 line-through"
-              }`}
+              className={`flex items-center gap-3 text-xs transition-all duration-500 ${feat.included ? "text-foreground/90" : "text-muted-foreground/30 line-through"}`}
             >
-              <div
-                className={`p-0.5 rounded transition-all duration-500 group-hover:scale-110 group-hover:drop-shadow-[0_0_4px_rgba(132,204,34,0.4)]`}
-              >
+              <div className='p-0.5 rounded transition-all duration-500 group-hover:scale-110'>
                 {feat.included ? (
                   <Check className='size-3.5 text-primary' />
                 ) : (
@@ -200,8 +192,8 @@ export function PricingCard({
               : isLoading
                 ? "bg-primary/20 text-primary border-primary/50 cursor-wait"
                 : plan.isHero
-                  ? "bg-primary text-black border-primary hover:bg-primary/90 hover:-translate-y-1 hover:shadow-[0_5px_20px_rgba(132,204,34,0.3)]"
-                  : "bg-white/5 text-foreground border-white/10 hover:bg-white/10 hover:border-white/20 hover:-translate-y-1"
+                  ? "bg-primary text-black border-primary hover:bg-primary/90"
+                  : "bg-white/5 text-foreground border-white/10 hover:bg-white/10"
           }`}
         >
           {isLoading

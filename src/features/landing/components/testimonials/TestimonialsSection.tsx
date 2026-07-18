@@ -11,7 +11,6 @@ import { TestimonialCard } from "./TestimonialCard";
 
 export function TestimonialsSection() {
   const sectionRef = React.useRef<HTMLElement>(null);
-
   const isInView = useInView(sectionRef, { margin: "300px" });
 
   const repeatedRow1 = [
@@ -31,7 +30,8 @@ export function TestimonialsSection() {
       className='w-full py-24 md:py-32 relative bg-[#050507] overflow-hidden flex flex-col items-center justify-center'
     >
       <div className='absolute inset-0 z-0 pointer-events-none'>
-        <div className='absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[1000px] h-[600px] bg-primary/[0.06] rounded-full blur-[150px] transform-gpu' />
+        {/* 🚀 فیکس شد: مخفی کردن هاله‌ی بلر ۱۵۰ پیکسلی در موبایل */}
+        <div className='hidden md:block absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[1000px] h-[600px] bg-primary/[0.06] rounded-full blur-[150px] transform-gpu' />
       </div>
 
       <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 w-full flex flex-col items-center mb-20'>

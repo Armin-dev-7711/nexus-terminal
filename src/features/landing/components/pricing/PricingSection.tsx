@@ -75,7 +75,7 @@ export function PricingSection() {
 
         {isInView && (
           <motion.div
-            className='absolute inset-0 opacity-40 mix-blend-screen blur-[100px] transform-gpu'
+            className='hidden md:block absolute inset-0 opacity-40 mix-blend-screen blur-[100px] transform-gpu'
             style={{ background: spotlightBackground }}
           />
         )}

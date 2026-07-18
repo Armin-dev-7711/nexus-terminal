@@ -31,14 +31,10 @@ export function TestimonialCard({ item }: TestimonialCardProps) {
 
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
     if (window.innerWidth < 768) return;
-
     if (!cardRef.current) return;
     const rect = cardRef.current.getBoundingClientRect();
-    const x = (e.clientX - rect.left) / rect.width - 0.5;
-    const y = (e.clientY - rect.top) / rect.height - 0.5;
-
-    mouseX.set(x);
-    mouseY.set(y);
+    mouseX.set((e.clientX - rect.left) / rect.width - 0.5);
+    mouseY.set((e.clientY - rect.top) / rect.height - 0.5);
   };
 
   const handleMouseLeave = () => {
@@ -52,10 +48,12 @@ export function TestimonialCard({ item }: TestimonialCardProps) {
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
       style={{ rotateX, rotateY, transformStyle: "preserve-3d" }}
-      className='w-[380px] shrink-0 rounded-2xl p-6 bg-card/20 border border-white/10 backdrop-blur-md relative group/card select-none flex flex-col justify-between shadow-[0_4px_24px_rgba(0,0,0,0.4),inset_0_1px_1px_rgba(255,255,255,0.15)] transform-gpu'
+      // 🚀 فیکس شد: در موبایل بلر خاموش و پس‌زمینه سالید (Solid) است. در دسکتاپ بلر فعال می‌شود.
+      className='w-[380px] shrink-0 rounded-2xl p-6 bg-zinc-950 md:bg-card/20 border border-white/10 backdrop-blur-none md:backdrop-blur-md relative group/card select-none flex flex-col justify-between shadow-xl transform-gpu'
     >
       <div
-        className='absolute inset-0 z-0 pointer-events-none opacity-[0.03] mix-blend-overlay rounded-2xl transform-gpu'
+        // 🚀 فیکس شد: غیرفعال کردن پترن سنگین در موبایل
+        className='hidden md:block absolute inset-0 z-0 pointer-events-none opacity-[0.03] mix-blend-overlay rounded-2xl transform-gpu'
         style={{
           backgroundImage: `url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyBAMAAADsEZWCAAAAGFBMVEUAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAMc/kBAAAACHRSTlMAAAAAAABhGPeXoQAAAIZJREFUOMuV1bENwCAMQ9FwEQ4yQrEB82cgP1UqROrt1L9PsoL/2E4h5aDUI9Qj1CPUo5P/e5z0hZz0hZz0hZz0hZz0hZz0hZz0hZz0hZz0hZz0hZz0hZz0hZz0hZz0hZz0hZz0hZz0hZz0hZz0hZz0hZz0hZz0hZz0hZz0hZz0hZz0hZz0hZz05Z5yCweK6T23AAAAAElFTkSuQmCC")`,
           backgroundSize: "100px 100px",
@@ -63,12 +61,14 @@ export function TestimonialCard({ item }: TestimonialCardProps) {
       />
 
       <motion.div
-        className='absolute inset-0 pointer-events-none opacity-0 group-hover/card:opacity-100 transition-opacity duration-500 blur-xl z-0 rounded-2xl transform-gpu'
+        // 🚀 فیکس شد: غیرفعال کردن گرادیان ماوس در موبایل (چون ماوس وجود ندارد)
+        className='hidden md:block absolute inset-0 pointer-events-none opacity-0 group-hover/card:opacity-100 transition-opacity duration-500 blur-xl z-0 rounded-2xl transform-gpu'
         style={{
           background: useMotionTemplate`radial-gradient(150px circle at ${useTransform(smoothX, [-0.5, 0.5], ["0%", "100%"])} ${useTransform(smoothY, [-0.5, 0.5], ["0%", "100%"])}, rgba(132,204,34,0.15), transparent)`,
         }}
       />
 
+      {/* بقیه محتوای کارت بدون تغییر... */}
       <div className='relative z-10'>
         <div className='flex items-center justify-between mb-4'>
           <div className='flex items-center gap-3'>
@@ -84,7 +84,6 @@ export function TestimonialCard({ item }: TestimonialCardProps) {
               </span>
             </div>
           </div>
-
           <div className='flex flex-col items-end gap-1 text-[9px]'>
             <span className='bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 px-2 py-0.5 rounded text-[8px] font-bold tracking-wider uppercase shadow-[0_0_10px_rgba(52,211,153,0.1)]'>
               {item.nodeStatus}
@@ -92,7 +91,6 @@ export function TestimonialCard({ item }: TestimonialCardProps) {
             <span className='text-muted-foreground/40'>{item.latency}</span>
           </div>
         </div>
-
         <p className='text-[13px] text-muted-foreground/90 leading-relaxed font-medium mb-5 min-h-[64px]'>
           &quot;{item.feedback}&quot;
         </p>
@@ -107,7 +105,6 @@ export function TestimonialCard({ item }: TestimonialCardProps) {
             />
           ))}
         </div>
-
         <div className='flex items-center gap-3 text-muted-foreground/50'>
           <div className='flex items-center gap-1 text-primary/80'>
             <ShieldCheck className='size-3.5 text-primary' />

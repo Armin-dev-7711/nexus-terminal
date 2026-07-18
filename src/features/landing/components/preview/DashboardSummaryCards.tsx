@@ -13,6 +13,16 @@ export function DashboardSummaryCards({
 }) {
   const { roundedBalance, roundedProfit } = useSimulatedMetrics(isActive);
 
+  // 🚀 فیکس شد: تشخیص سایز صفحه برای خاموش کردن انیمیشن‌های سنگین SVG در موبایل
+  const [isMobile, setIsMobile] = React.useState(true); // پیش‌فرض موبایل برای جلوگیری از لگ اولیه
+
+  React.useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth < 768);
+    handleResize(); // چک کردن در لحظه اول
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
   return (
     <div className='grid grid-cols-1 md:grid-cols-4 gap-4 w-full'>
       {/* 1. TOTAL BALANCE */}
@@ -45,15 +55,16 @@ export function DashboardSummaryCards({
             strokeWidth='1.5'
             initial={{ pathLength: 0 }}
             animate={isActive ? { pathLength: 1 } : { pathLength: 0 }}
+            // 🚀 فیکس شد: توقف انیمیشن بی‌نهایت در موبایل
             transition={
-              isActive
+              isActive && !isMobile
                 ? {
                     duration: 2,
                     repeat: Infinity,
                     repeatType: "reverse",
                     ease: "easeInOut",
                   }
-                : { duration: 0 }
+                : { duration: 1, ease: "easeOut" } // در موبایل فقط یکبار لود می‌شود
             }
           />
           <path
@@ -101,14 +112,14 @@ export function DashboardSummaryCards({
             initial={{ pathLength: 0 }}
             animate={isActive ? { pathLength: 1 } : { pathLength: 0 }}
             transition={
-              isActive
+              isActive && !isMobile
                 ? {
                     duration: 2.5,
                     repeat: Infinity,
                     repeatType: "reverse",
                     ease: "easeInOut",
                   }
-                : { duration: 0 }
+                : { duration: 1, ease: "easeOut" }
             }
           />
           <path
@@ -159,14 +170,14 @@ export function DashboardSummaryCards({
             initial={{ pathLength: 0 }}
             animate={isActive ? { pathLength: 1 } : { pathLength: 0 }}
             transition={
-              isActive
+              isActive && !isMobile
                 ? {
                     duration: 2,
                     repeat: Infinity,
                     repeatType: "reverse",
                     ease: "easeInOut",
                   }
-                : { duration: 0 }
+                : { duration: 1, ease: "easeOut" }
             }
           />
         </svg>
@@ -203,14 +214,14 @@ export function DashboardSummaryCards({
             initial={{ pathLength: 0 }}
             animate={isActive ? { pathLength: 1 } : { pathLength: 0 }}
             transition={
-              isActive
+              isActive && !isMobile
                 ? {
                     duration: 3,
                     repeat: Infinity,
                     repeatType: "reverse",
                     ease: "linear",
                   }
-                : { duration: 0 }
+                : { duration: 1, ease: "easeOut" }
             }
           />
           <path

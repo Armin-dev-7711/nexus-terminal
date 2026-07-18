@@ -67,8 +67,9 @@ export function Dashboard3DShell({ children }: Dashboard3DShellProps) {
         }}
         className='relative w-full h-full min-h-[550px] lg:h-auto lg:aspect-[16/10] rounded-2xl md:rounded-[2rem] bg-[#0c0c0e] border border-white/[0.08] shadow-[inset_0_1px_1px_rgba(255,255,255,0.1)] overflow-hidden flex flex-col cursor-crosshair will-change-transform transform-gpu'
       >
+        {/* 🚀 فیکس شد: غیرفعال کردن لایه رفلکشن نوری سنگین روی موبایل */}
         <motion.div
-          className='absolute inset-0 z-50 pointer-events-none rounded-[2rem] mix-blend-overlay opacity-50'
+          className='hidden md:block absolute inset-0 z-50 pointer-events-none rounded-[2rem] mix-blend-overlay opacity-50'
           style={{
             background: useMotionTemplate`radial-gradient(800px circle at ${reflectionX} ${reflectionY}, rgba(255,255,255,0.1), transparent 40%)`,
           }}

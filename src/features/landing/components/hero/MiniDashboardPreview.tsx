@@ -69,7 +69,7 @@ export function MiniDashboardPreview() {
   return (
     <div
       ref={containerRef}
-      className='w-full max-w-5xl mx-auto rounded-3xl border border-border/50 bg-card/40 backdrop-blur-md md:backdrop-blur-xl p-5 sm:p-6 shadow-[0_0_30px_rgba(0,0,0,0.3)] relative overflow-hidden text-[11px] select-none transform-gpu'
+      className='w-full max-w-5xl mx-auto rounded-3xl border border-border/50 bg-zinc-950 md:bg-card/40 backdrop-blur-none md:backdrop-blur-xl p-5 sm:p-6 shadow-[0_0_30px_rgba(0,0,0,0.3)] relative overflow-hidden text-[11px] select-none transform-gpu'
     >
       <div className='flex items-center justify-between border-b border-border/30 pb-4 mb-5'>
         <div className='flex items-center gap-1.5'>

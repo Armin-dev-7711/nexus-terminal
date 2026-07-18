@@ -85,7 +85,8 @@ export function Feature3DCard({
         }}
         className='relative group w-full h-[320px] rounded-3xl transition-transform duration-500 hover:scale-[1.02] cursor-pointer'
       >
-        <div className='absolute inset-0 rounded-3xl border border-border/30 bg-card/20 backdrop-blur-xl overflow-hidden group-hover:border-border/60 transition-colors duration-500 group-hover:bg-card/30 group-hover:shadow-[0_20px_40px_-15px_rgba(0,0,0,0.5)]'>
+        {/* 🚀 فیکس شد: اعمال رنگ صلب (zinc-950) برای موبایل و بلر برای دسکتاپ */}
+        <div className='absolute inset-0 rounded-3xl border border-border/30 bg-zinc-950 md:bg-card/20 backdrop-blur-none md:backdrop-blur-xl overflow-hidden group-hover:border-border/60 transition-colors duration-500 group-hover:bg-card/30 group-hover:shadow-2xl'>
           <motion.div
             className='hidden md:block absolute inset-0 z-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none mix-blend-screen'
             style={{

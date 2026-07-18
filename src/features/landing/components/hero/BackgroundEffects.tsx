@@ -15,8 +15,9 @@ export function BackgroundEffects() {
 
   return (
     <div className='absolute inset-0 z-0 overflow-hidden bg-[#050507] pointer-events-none'>
+      {/* 🚀 فیکس شد: اسپات‌لایت متصل به ماوس در موبایل مخفی شد */}
       <motion.div
-        className='absolute inset-0 z-10 opacity-70 will-change-[background]'
+        className='hidden md:block absolute inset-0 z-10 opacity-70 will-change-[background]'
         style={{ background: spotlightBackground }}
       />
 
@@ -32,10 +33,12 @@ export function BackgroundEffects() {
         />
       </div>
 
-      <div className='absolute top-[-5%] left-1/2 -translate-x-1/2 w-[800px] h-[500px] bg-gradient-to-b from-primary/10 via-emerald-500/5 to-transparent rounded-full blur-[80px] md:blur-[140px] transform-gpu' />
+      {/* 🚀 فیکس شد: هاله‌ی نوری عظیم روی موبایل مخفی شد تا پردازنده درگیر نشود */}
+      <div className='hidden md:block absolute top-[-5%] left-1/2 -translate-x-1/2 w-[800px] h-[500px] bg-gradient-to-b from-primary/10 via-emerald-500/5 to-transparent rounded-full blur-[140px] transform-gpu' />
 
+      {/* 🚀 فیکس شد: پترن سنگینِ mix-blend-overlay روی موبایل مخفی شد */}
       <div
-        className='absolute inset-0 opacity-[0.03] mix-blend-overlay'
+        className='hidden md:block absolute inset-0 opacity-[0.03] mix-blend-overlay'
         style={{
           backgroundImage: `url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyBAMAAADsEZWCAAAAGFBMVEUAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAMc/kBAAAACHRSTlMAAAAAAABhGPeXoQAAAIZJREFUOMuV1bENwCAMQ9FwEQ4yQrEB82cgP1UqROrt1L9PsoL/2E4h5aDUI9Qj1CPUo5P/e5z0hZz0hZz0hZz0hZz0hZz0hZz0hZz0hZz0hZz0hZz0hZz0hZz0hZz0hZz0hZz0hZz0hZz0hZz0hZz0hZz0hZz0hZz0hZz0hZz0hZz0hZz0hZz0hZz0hZz0hZz0hZz05Z5yCweK6T23AAAAAElFTkSuQmCC")`,
           backgroundSize: "100px 100px",

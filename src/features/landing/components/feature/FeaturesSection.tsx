@@ -27,16 +27,17 @@ export function FeaturesSection() {
   return (
     <section className='w-full py-24 md:py-32 relative z-20 bg-[#050507] overflow-hidden'>
       <div className='absolute inset-0 pointer-events-none z-0 overflow-hidden'>
+        {/* 🚀 فیکس شد: مخفی کردن پترن ترکیبی سنگین در موبایل */}
         <div
-          className='absolute inset-0 opacity-[0.03] mix-blend-overlay'
+          className='hidden md:block absolute inset-0 opacity-[0.03] mix-blend-overlay'
           style={{
-            backgroundImage: `url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyBAMAAADsEZWCAAAAGFBMVEUAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAMc/kBAAAACHRSTlMAAAAAAABhGPeXoQAAAIZJREFUOMuV1bENwCAMQ9FwEQ4yQrEB82cgP1UqROrt1L9PsoL/2E4h5aDUI9Qj1CPUo5P/e5z0hZz0hZz0hZz0hZz0hZz0hZz0hZz0hZz0hZz0hZz0hZz0hZz0hZz0hZz0hZz0hZz0hZz0hZz0hZz0hZz0hZz0hZz0hZz0hZz0hZz0hZz0hZz0hZz0hZz0hZz0hZz05Z5yCweK6T23AAAAAElFTkSuQmCC")`,
+            backgroundImage: `url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyBAMAAADsEZWCAAAAGFBMVEUAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAMc/kBAAAACHRSTlMAAAAAAABhGPeXoQAAAIZJREFUOMuV1bENwCAMQ9FwEQ4yQrEB82cgP1UqROrt1L9PsoL/2E4h5aDUI9Qj1CPUo5P/e5z0hZz0hZz0hZz0hZz0hZz0hZz0hZz0hZz0hZz0hZz0hZz0hZz0hZz0hZz0hZz0hZz0hZz0hZz0hZz0hZz0hZz0hZz0hZz0hZz0hZz0hZz0hZz05Z5yCweK6T23AAAAAElFTkSuQmCC")`,
             backgroundSize: "100px 100px",
           }}
         />
 
-        {/* Central Great Halo (Aurora) */}
-        <div className='absolute top-[-5%] md:top-0 left-1/2 -translate-x-1/2 w-[150vw] md:w-[1200px] h-[350px] md:h-[700px] bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-emerald-500/20 via-primary/5 to-transparent blur-[80px] md:blur-[120px] transform-gpu' />
+        {/* 🚀 فیکس شد: مخفی کردن هاله‌ی مرکزی عظیم (Aurora) در موبایل */}
+        <div className='hidden md:block absolute top-0 left-1/2 -translate-x-1/2 w-[1200px] h-[700px] bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-emerald-500/20 via-primary/5 to-transparent blur-[120px] transform-gpu' />
 
         {/* Desktop side halos */}
         <div className='hidden md:block absolute top-[20%] left-[-15%] w-[600px] h-[600px] bg-primary/10 rounded-full blur-[150px] transform-gpu' />

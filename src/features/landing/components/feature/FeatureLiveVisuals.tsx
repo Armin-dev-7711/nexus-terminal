@@ -19,7 +19,6 @@ export function FeatureLiveVisuals({ type }: FeatureLiveVisualsProps) {
   const visualRef = React.useRef<HTMLDivElement>(null);
   const isInView = useInView(visualRef, { once: false });
 
-  // 🚀 فیکس شد: هوک موبایل
   const [isMobile, setIsMobile] = React.useState(true);
   React.useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth < 768);
@@ -41,7 +40,6 @@ export function FeatureLiveVisuals({ type }: FeatureLiveVisualsProps) {
         const target = current + Math.floor(Math.random() * 50) + 10;
         animate(count, target, { duration: 1.5, ease: "easeOut" });
       };
-
       const interval = setInterval(updateCounter, 3000);
       return () => clearInterval(interval);
     }
@@ -61,7 +59,8 @@ export function FeatureLiveVisuals({ type }: FeatureLiveVisualsProps) {
                     preserveAspectRatio='none'
                   >
                     <motion.path
-                      // 🚀 فیکس شد: توقف رسم مداوم در موبایل
+                      // 🚀 کلید طلایی برای ریست کردن انیمیشن هنگام تغییر سایز مرورگر
+                      key={isMobile ? "path-mobile" : "path-desktop"}
                       initial={
                         isMobile
                           ? { pathLength: 1, opacity: 1 }
@@ -70,19 +69,12 @@ export function FeatureLiveVisuals({ type }: FeatureLiveVisualsProps) {
                       animate={
                         isMobile
                           ? { pathLength: 1, opacity: 1 }
-                          : {
-                              pathLength: [0, 1, 1, 0],
-                              opacity: [0, 1, 1, 0],
-                            }
+                          : { pathLength: [0, 1, 1, 0], opacity: [0, 1, 1, 0] }
                       }
                       transition={
                         isMobile
                           ? { duration: 0 }
-                          : {
-                              duration: 6,
-                              repeat: Infinity,
-                              ease: "easeInOut",
-                            }
+                          : { duration: 6, repeat: Infinity, ease: "easeInOut" }
                       }
                       d='M0 35 Q15 15, 30 25 T60 5 T90 20 L100 10'
                       fill='none'
@@ -93,7 +85,6 @@ export function FeatureLiveVisuals({ type }: FeatureLiveVisualsProps) {
                   </svg>
                 </div>
               );
-
             case "counter":
               return (
                 <div className='w-full h-12 flex items-center justify-between rounded-lg bg-background/20 border border-border/20 px-3 opacity-80 group-hover:opacity-100 transition-opacity'>
@@ -105,7 +96,6 @@ export function FeatureLiveVisuals({ type }: FeatureLiveVisualsProps) {
                   </motion.span>
                 </div>
               );
-
             case "live-dot":
               return (
                 <div className='w-full h-12 flex items-center justify-end rounded-lg bg-background/20 border border-border/20 px-3 opacity-80 group-hover:opacity-100 transition-opacity'>
@@ -125,7 +115,6 @@ export function FeatureLiveVisuals({ type }: FeatureLiveVisualsProps) {
                   </div>
                 </div>
               );
-
             case "pulse-shield":
               return (
                 <div className='w-full h-12 flex items-center justify-center rounded-lg bg-background/20 border border-border/20 relative opacity-80 group-hover:opacity-100 transition-opacity overflow-hidden'>
@@ -141,7 +130,6 @@ export function FeatureLiveVisuals({ type }: FeatureLiveVisualsProps) {
                   <Shield className='size-4 text-rose-400 relative z-10 drop-shadow-[0_0_8px_rgba(251,113,133,0.8)]' />
                 </div>
               );
-
             default:
               return null;
           }

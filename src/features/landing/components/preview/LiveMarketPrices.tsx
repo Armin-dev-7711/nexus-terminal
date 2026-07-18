@@ -46,8 +46,8 @@ const initialPrices: SimulatedCoin[] = [
 
 export function LiveMarketPrices({ isActive = true }: { isActive?: boolean }) {
   const { prices } = useSimulatedMarket(initialPrices, isActive);
-
   const [isMobile, setIsMobile] = React.useState(true);
+
   React.useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth < 768);
     handleResize();
@@ -87,8 +87,8 @@ export function LiveMarketPrices({ isActive = true }: { isActive?: boolean }) {
             </div>
             <div className='flex flex-col items-end'>
               <motion.span
-                key={isMobile ? coin.id : coin.initialPrice}
-                initial={isMobile ? false : { opacity: 0.5 }}
+                key={`${coin.id}-${coin.initialPrice}`}
+                initial={isMobile ? { opacity: 1 } : { opacity: 0.5 }}
                 animate={{ opacity: 1 }}
                 className='text-xs font-bold text-foreground'
               >

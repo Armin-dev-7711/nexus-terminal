@@ -46,7 +46,6 @@ const DashboardCustomTooltip = ({
 
 export function PerformanceChart() {
   const [timeframe, setTimeframe] = React.useState("1m");
-  // 🚀 فیکس شد: هوک تشخیص موبایل
   const [isMobile, setIsMobile] = React.useState(true);
 
   React.useEffect(() => {
@@ -86,8 +85,11 @@ export function PerformanceChart() {
       </CardHeader>
 
       <CardContent className='h-72 w-full pt-2 pr-4 pl-0'>
-        <ResponsiveContainer width='100%' height='100%'>
+        {/* 🚀 اضافه کردن minWidth برای جلوگیری از عرض صفر در زمان تغییر سایز */}
+        <ResponsiveContainer width='100%' height='100%' minWidth={10}>
           <AreaChart
+            // 🚀 کلید طلایی: نابود کردن و ساخت مجدد چارت در لحظه تغییر سایز برای جلوگیری از ارور split
+            key={isMobile ? "chart-mobile" : "chart-desktop"}
             data={mockMultiChartData[timeframe]}
             margin={{ top: 10, right: 10, left: -20, bottom: 0 }}
           >
@@ -138,7 +140,6 @@ export function PerformanceChart() {
               strokeWidth={2.5}
               fillOpacity={1}
               fill='url(#colorValueDash)'
-              // 🚀 فیکس شد: غیرفعال کردن انیمیشن تغییر نمودار در موبایل
               isAnimationActive={!isMobile}
               activeDot={{
                 r: 6,

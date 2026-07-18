@@ -49,13 +49,14 @@ export function DashboardSummaryCards({
           viewBox='0 0 100 40'
         >
           <motion.path
+            // 🚀 فیکس شد
+            key={isMobile ? "path1-mob" : "path1-desk"}
             d='M0 35 Q 25 15, 50 25 T 100 10'
             fill='none'
             stroke='#34d399'
             strokeWidth='1.5'
             initial={{ pathLength: 0 }}
             animate={isActive ? { pathLength: 1 } : { pathLength: 0 }}
-            // 🚀 فیکس شد: توقف انیمیشن بی‌نهایت در موبایل
             transition={
               isActive && !isMobile
                 ? {
@@ -64,7 +65,7 @@ export function DashboardSummaryCards({
                     repeatType: "reverse",
                     ease: "easeInOut",
                   }
-                : { duration: 1, ease: "easeOut" } // در موبایل فقط یکبار لود می‌شود
+                : { duration: 1, ease: "easeOut" }
             }
           />
           <path
@@ -105,6 +106,8 @@ export function DashboardSummaryCards({
           viewBox='0 0 100 40'
         >
           <motion.path
+            // 🚀 فیکس شد
+            key={isMobile ? "path2-mob" : "path2-desk"}
             d='M0 30 Q 30 40, 60 15 T 100 5'
             fill='none'
             stroke='#34d399'
@@ -163,6 +166,8 @@ export function DashboardSummaryCards({
           viewBox='0 0 100 40'
         >
           <motion.path
+            // 🚀 فیکس شد
+            key={isMobile ? "path3-mob" : "path3-desk"}
             d='M0 40 Q 40 20, 70 25 T 100 15'
             fill='none'
             stroke='#f59e0b'
@@ -207,6 +212,8 @@ export function DashboardSummaryCards({
           viewBox='0 0 100 40'
         >
           <motion.path
+            // 🚀 فیکس شد
+            key={isMobile ? "path4-mob" : "path4-desk"}
             d='M0 35 L 25 35 L 25 20 L 50 20 L 50 25 L 75 25 L 75 10 L 100 10'
             fill='none'
             stroke='#a855f7'

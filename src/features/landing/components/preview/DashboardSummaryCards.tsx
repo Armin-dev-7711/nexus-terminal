@@ -4,7 +4,22 @@
 import * as React from "react";
 import { motion } from "motion/react";
 import { Wallet, TrendingUp, Link as LinkIcon, Layers } from "lucide-react";
+import { Area, AreaChart, ResponsiveContainer } from "recharts";
 import { useSimulatedMetrics } from "../../hooks/usePreviewSimulation";
+
+// دیتای شبیه‌سازی شده برای چارت‌های پس‌زمینه کارت‌ها
+const dataBalance = [{ val: 15 }, { val: 45 }, { val: 25 }, { val: 60 }];
+const dataProfit = [{ val: 10 }, { val: 20 }, { val: 50 }, { val: 80 }];
+const dataPerformer = [{ val: 20 }, { val: 70 }, { val: 40 }, { val: 85 }];
+const dataDiversity = [
+  { val: 20 },
+  { val: 20 },
+  { val: 45 },
+  { val: 45 },
+  { val: 70 },
+  { val: 70 },
+  { val: 95 },
+];
 
 export function DashboardSummaryCards({
   isActive = true,
@@ -13,12 +28,12 @@ export function DashboardSummaryCards({
 }) {
   const { roundedBalance, roundedProfit } = useSimulatedMetrics(isActive);
 
-  // 🚀 فیکس شد: تشخیص سایز صفحه برای خاموش کردن انیمیشن‌های سنگین SVG در موبایل
-  const [isMobile, setIsMobile] = React.useState(true); // پیش‌فرض موبایل برای جلوگیری از لگ اولیه
+  // 🚀 فیکس شد: تشخیص سایز صفحه برای خاموش کردن انیمیشن در موبایل
+  const [isMobile, setIsMobile] = React.useState(true);
 
   React.useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth < 768);
-    handleResize(); // چک کردن در لحظه اول
+    handleResize();
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
@@ -43,43 +58,30 @@ export function DashboardSummaryCards({
             Base currency: USD
           </span>
         </div>
-        <svg
-          className='absolute bottom-0 left-0 w-full h-1/2 opacity-30 pointer-events-none'
-          preserveAspectRatio='none'
-          viewBox='0 0 100 40'
-        >
-          <motion.path
-            // 🚀 فیکس شد
-            key={isMobile ? "path1-mob" : "path1-desk"}
-            d='M0 35 Q 25 15, 50 25 T 100 10'
-            fill='none'
-            stroke='#34d399'
-            strokeWidth='1.5'
-            initial={{ pathLength: 0 }}
-            animate={isActive ? { pathLength: 1 } : { pathLength: 0 }}
-            transition={
-              isActive && !isMobile
-                ? {
-                    duration: 2,
-                    repeat: Infinity,
-                    repeatType: "reverse",
-                    ease: "easeInOut",
-                  }
-                : { duration: 1, ease: "easeOut" }
-            }
-          />
-          <path
-            d='M0 35 Q 25 15, 50 25 T 100 10 L 100 40 L 0 40 Z'
-            fill='url(#gradGreen)'
-            opacity='0.2'
-          />
-          <defs>
-            <linearGradient id='gradGreen' x1='0' y1='0' x2='0' y2='1'>
-              <stop offset='0%' stopColor='#34d399' />
-              <stop offset='100%' stopColor='transparent' />
-            </linearGradient>
-          </defs>
-        </svg>
+        <div className='absolute bottom-0 left-0 w-full h-1/2 opacity-30 pointer-events-none'>
+          <ResponsiveContainer width='100%' height='100%' minWidth={10}>
+            <AreaChart
+              data={dataBalance}
+              margin={{ top: 5, right: 0, left: 0, bottom: 0 }}
+            >
+              <defs>
+                <linearGradient id='cardGradGreen1' x1='0' y1='0' x2='0' y2='1'>
+                  <stop offset='0%' stopColor='#34d399' stopOpacity={0.4} />
+                  <stop offset='100%' stopColor='#34d399' stopOpacity={0} />
+                </linearGradient>
+              </defs>
+              <Area
+                type='monotone'
+                dataKey='val'
+                stroke='#34d399'
+                strokeWidth={1.5}
+                fill='url(#cardGradGreen1)'
+                isAnimationActive={!isMobile && isActive}
+                animationDuration={1500}
+              />
+            </AreaChart>
+          </ResponsiveContainer>
+        </div>
       </div>
 
       {/* 2. 24H PROFIT / LOSS */}
@@ -100,43 +102,30 @@ export function DashboardSummaryCards({
             <TrendingUp className='size-3' /> +2.35% since yesterday
           </span>
         </div>
-        <svg
-          className='absolute bottom-0 left-0 w-full h-1/2 opacity-30 pointer-events-none'
-          preserveAspectRatio='none'
-          viewBox='0 0 100 40'
-        >
-          <motion.path
-            // 🚀 فیکس شد
-            key={isMobile ? "path2-mob" : "path2-desk"}
-            d='M0 30 Q 30 40, 60 15 T 100 5'
-            fill='none'
-            stroke='#34d399'
-            strokeWidth='1.5'
-            initial={{ pathLength: 0 }}
-            animate={isActive ? { pathLength: 1 } : { pathLength: 0 }}
-            transition={
-              isActive && !isMobile
-                ? {
-                    duration: 2.5,
-                    repeat: Infinity,
-                    repeatType: "reverse",
-                    ease: "easeInOut",
-                  }
-                : { duration: 1, ease: "easeOut" }
-            }
-          />
-          <path
-            d='M0 30 Q 30 40, 60 15 T 100 5 L 100 40 L 0 40 Z'
-            fill='url(#gradGreen2)'
-            opacity='0.2'
-          />
-          <defs>
-            <linearGradient id='gradGreen2' x1='0' y1='0' x2='0' y2='1'>
-              <stop offset='0%' stopColor='#34d399' />
-              <stop offset='100%' stopColor='transparent' />
-            </linearGradient>
-          </defs>
-        </svg>
+        <div className='absolute bottom-0 left-0 w-full h-1/2 opacity-30 pointer-events-none'>
+          <ResponsiveContainer width='100%' height='100%' minWidth={10}>
+            <AreaChart
+              data={dataProfit}
+              margin={{ top: 5, right: 0, left: 0, bottom: 0 }}
+            >
+              <defs>
+                <linearGradient id='cardGradGreen2' x1='0' y1='0' x2='0' y2='1'>
+                  <stop offset='0%' stopColor='#34d399' stopOpacity={0.4} />
+                  <stop offset='100%' stopColor='#34d399' stopOpacity={0} />
+                </linearGradient>
+              </defs>
+              <Area
+                type='monotone'
+                dataKey='val'
+                stroke='#34d399'
+                strokeWidth={1.5}
+                fill='url(#cardGradGreen2)'
+                isAnimationActive={!isMobile && isActive}
+                animationDuration={1500}
+              />
+            </AreaChart>
+          </ResponsiveContainer>
+        </div>
       </div>
 
       {/* 3. TOP PERFORMER */}
@@ -160,32 +149,30 @@ export function DashboardSummaryCards({
             <TrendingUp className='size-3' /> +5.82% yield rate
           </span>
         </div>
-        <svg
-          className='absolute bottom-0 left-0 w-full h-1/2 opacity-30 pointer-events-none'
-          preserveAspectRatio='none'
-          viewBox='0 0 100 40'
-        >
-          <motion.path
-            // 🚀 فیکس شد
-            key={isMobile ? "path3-mob" : "path3-desk"}
-            d='M0 40 Q 40 20, 70 25 T 100 15'
-            fill='none'
-            stroke='#f59e0b'
-            strokeWidth='1.5'
-            initial={{ pathLength: 0 }}
-            animate={isActive ? { pathLength: 1 } : { pathLength: 0 }}
-            transition={
-              isActive && !isMobile
-                ? {
-                    duration: 2,
-                    repeat: Infinity,
-                    repeatType: "reverse",
-                    ease: "easeInOut",
-                  }
-                : { duration: 1, ease: "easeOut" }
-            }
-          />
-        </svg>
+        <div className='absolute bottom-0 left-0 w-full h-1/2 opacity-30 pointer-events-none'>
+          <ResponsiveContainer width='100%' height='100%' minWidth={10}>
+            <AreaChart
+              data={dataPerformer}
+              margin={{ top: 5, right: 0, left: 0, bottom: 0 }}
+            >
+              <defs>
+                <linearGradient id='cardGradAmber' x1='0' y1='0' x2='0' y2='1'>
+                  <stop offset='0%' stopColor='#f59e0b' stopOpacity={0.4} />
+                  <stop offset='100%' stopColor='#f59e0b' stopOpacity={0} />
+                </linearGradient>
+              </defs>
+              <Area
+                type='monotone'
+                dataKey='val'
+                stroke='#f59e0b'
+                strokeWidth={1.5}
+                fill='url(#cardGradAmber)'
+                isAnimationActive={!isMobile && isActive}
+                animationDuration={1500}
+              />
+            </AreaChart>
+          </ResponsiveContainer>
+        </div>
       </div>
 
       {/* 4. ASSET DIVERSITY */}
@@ -206,43 +193,30 @@ export function DashboardSummaryCards({
             Spread across 4 main networks
           </span>
         </div>
-        <svg
-          className='absolute bottom-0 left-0 w-full h-1/2 opacity-30 pointer-events-none'
-          preserveAspectRatio='none'
-          viewBox='0 0 100 40'
-        >
-          <motion.path
-            // 🚀 فیکس شد
-            key={isMobile ? "path4-mob" : "path4-desk"}
-            d='M0 35 L 25 35 L 25 20 L 50 20 L 50 25 L 75 25 L 75 10 L 100 10'
-            fill='none'
-            stroke='#a855f7'
-            strokeWidth='1.5'
-            initial={{ pathLength: 0 }}
-            animate={isActive ? { pathLength: 1 } : { pathLength: 0 }}
-            transition={
-              isActive && !isMobile
-                ? {
-                    duration: 3,
-                    repeat: Infinity,
-                    repeatType: "reverse",
-                    ease: "linear",
-                  }
-                : { duration: 1, ease: "easeOut" }
-            }
-          />
-          <path
-            d='M0 35 L 25 35 L 25 20 L 50 20 L 50 25 L 75 25 L 75 10 L 100 10 L 100 40 L 0 40 Z'
-            fill='url(#gradPurple)'
-            opacity='0.2'
-          />
-          <defs>
-            <linearGradient id='gradPurple' x1='0' y1='0' x2='0' y2='1'>
-              <stop offset='0%' stopColor='#a855f7' />
-              <stop offset='100%' stopColor='transparent' />
-            </linearGradient>
-          </defs>
-        </svg>
+        <div className='absolute bottom-0 left-0 w-full h-1/2 opacity-30 pointer-events-none'>
+          <ResponsiveContainer width='100%' height='100%' minWidth={10}>
+            <AreaChart
+              data={dataDiversity}
+              margin={{ top: 5, right: 0, left: 0, bottom: 0 }}
+            >
+              <defs>
+                <linearGradient id='cardGradPurple' x1='0' y1='0' x2='0' y2='1'>
+                  <stop offset='0%' stopColor='#a855f7' stopOpacity={0.4} />
+                  <stop offset='100%' stopColor='#a855f7' stopOpacity={0} />
+                </linearGradient>
+              </defs>
+              <Area
+                type='step'
+                dataKey='val'
+                stroke='#a855f7'
+                strokeWidth={1.5}
+                fill='url(#cardGradPurple)'
+                isAnimationActive={!isMobile && isActive}
+                animationDuration={1500}
+              />
+            </AreaChart>
+          </ResponsiveContainer>
+        </div>
       </div>
     </div>
   );

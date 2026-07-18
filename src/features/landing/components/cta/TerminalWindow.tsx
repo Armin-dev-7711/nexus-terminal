@@ -21,7 +21,6 @@ export function TerminalWindow() {
   const isInView = useInView(containerRef, { once: true, margin: "-100px" });
 
   React.useEffect(() => {
-    // If the user hasn't scrolled to this section yet, don't start!
     if (!isInView) return;
 
     if (currentIndex < BOOT_SEQUENCE.length) {
@@ -31,7 +30,7 @@ export function TerminalWindow() {
           setCurrentIndex((prev) => prev + 1);
         },
         Math.random() * 500 + 400,
-      ); // More natural speed
+      );
       return () => clearTimeout(timeout);
     }
   }, [currentIndex, isInView]);
@@ -58,12 +57,12 @@ export function TerminalWindow() {
             className='flex items-center'
           >
             <span className='text-muted-foreground mr-2'>
-              {line.split(" ")[0]}
+              {/* 🚀 فیکس شد: اضافه شدن گارد امنیتی خط (line) برای جلوگیری از ارور اسپلیت */}
+              {line ? line.split(" ")[0] : ""}
             </span>
-            <span>{line.substring(2)}</span>
+            <span>{line ? line.substring(2) : ""}</span>
           </motion.div>
         ))}
-        {/* Cursor blinks only when scrolled */}
         {isInView && (
           <motion.div
             animate={{ opacity: [1, 0, 1] }}

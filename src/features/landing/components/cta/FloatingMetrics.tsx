@@ -51,14 +51,13 @@ export function FloatingMetrics({
     }));
 
     let mounted = true;
-    if (mounted) {
+    if (mounted)
       // eslint-disable-next-line
       setParticles(generated);
-    }
     return () => {
       mounted = false;
     };
-  }, [isSectionInView]); // 🚀 Dependent on the vision status
+  }, [isSectionInView]);
 
   if (!isSectionInView) return null;
 
@@ -77,7 +76,8 @@ export function FloatingMetrics({
             delay: p.delay,
             ease: "linear",
           }}
-          className='absolute size-1 bg-white rounded-full blur-[1px]'
+          // 🚀 فیکس شد: مخفی کردن ذرات در موبایل با hidden md:block
+          className='hidden md:block absolute size-1 bg-white rounded-full blur-[1px]'
           style={{ top: p.top, left: p.left }}
         />
       ))}

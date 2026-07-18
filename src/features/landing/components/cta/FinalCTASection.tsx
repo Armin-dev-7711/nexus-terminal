@@ -48,7 +48,7 @@ export function FinalCTASection() {
           <motion.div
             animate={{ opacity: [0.3, 0.6, 0.3], scale: [1, 1.05, 1] }}
             transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
-            className='absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[500px] bg-gradient-to-r from-primary/10 to-emerald-500/10 rounded-full blur-[180px] transform-gpu'
+            className='hidden md:block absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[500px] bg-gradient-to-r from-primary/10 to-emerald-500/10 rounded-full blur-[180px] transform-gpu'
           />
         )}
 

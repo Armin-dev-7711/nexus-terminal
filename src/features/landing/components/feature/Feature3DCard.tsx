@@ -87,7 +87,7 @@ export function Feature3DCard({
       >
         <div className='absolute inset-0 rounded-3xl border border-border/30 bg-card/20 backdrop-blur-xl overflow-hidden group-hover:border-border/60 transition-colors duration-500 group-hover:bg-card/30 group-hover:shadow-[0_20px_40px_-15px_rgba(0,0,0,0.5)]'>
           <motion.div
-            className='absolute inset-0 z-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none mix-blend-screen'
+            className='hidden md:block absolute inset-0 z-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none mix-blend-screen'
             style={{
               background: useMotionTemplate`radial-gradient(400px circle at ${mouseX}px ${mouseY}px, rgba(132, 204, 34, 0.12), transparent 80%)`,
             }}

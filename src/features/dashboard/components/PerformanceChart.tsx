@@ -1,3 +1,4 @@
+// مسیر: src/features/dashboard/components/PerformanceChart.tsx
 "use client";
 
 import * as React from "react";
@@ -18,7 +19,6 @@ import {
   ValueType,
 } from "recharts/types/component/DefaultTooltipContent";
 
-// Custom tooltip for dashboard chart (only for one value)
 const DashboardCustomTooltip = ({
   active,
   payload,
@@ -46,6 +46,15 @@ const DashboardCustomTooltip = ({
 
 export function PerformanceChart() {
   const [timeframe, setTimeframe] = React.useState("1m");
+  // 🚀 فیکس شد: هوک تشخیص موبایل
+  const [isMobile, setIsMobile] = React.useState(true);
+
+  React.useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth < 768);
+    handleResize();
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   return (
     <Card className='rounded-2xl border border-border/60 bg-card/30 backdrop-blur-sm flex flex-col justify-between overflow-hidden h-full'>
@@ -64,7 +73,7 @@ export function PerformanceChart() {
             <button
               key={t}
               onClick={() => setTimeframe(t)}
-              className={`rounded-lg px-2.5 py-1 text-xs font-medium  uppercase transition-all cursor-pointer ${
+              className={`rounded-lg px-2.5 py-1 text-xs font-medium uppercase transition-all cursor-pointer ${
                 timeframe === t
                   ? "bg-background text-foreground shadow-sm font-bold"
                   : "text-muted-foreground hover:text-foreground"
@@ -110,7 +119,7 @@ export function PerformanceChart() {
               fontSize={10}
               tickLine={false}
               axisLine={false}
-              tickFormatter={(value) => `$${(value / 1000).toFixed(0)}k`} // نمایش مخفف شده مقادیر بالا
+              tickFormatter={(value) => `$${(value / 1000).toFixed(0)}k`}
             />
 
             <Tooltip
@@ -129,6 +138,8 @@ export function PerformanceChart() {
               strokeWidth={2.5}
               fillOpacity={1}
               fill='url(#colorValueDash)'
+              // 🚀 فیکس شد: غیرفعال کردن انیمیشن تغییر نمودار در موبایل
+              isAnimationActive={!isMobile}
               activeDot={{
                 r: 6,
                 strokeWidth: 2,

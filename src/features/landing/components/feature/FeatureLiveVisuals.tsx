@@ -17,8 +17,16 @@ interface FeatureLiveVisualsProps {
 
 export function FeatureLiveVisuals({ type }: FeatureLiveVisualsProps) {
   const visualRef = React.useRef<HTMLDivElement>(null);
-
   const isInView = useInView(visualRef, { once: false });
+
+  // 🚀 فیکس شد: هوک موبایل
+  const [isMobile, setIsMobile] = React.useState(true);
+  React.useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth < 768);
+    handleResize();
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   const count = useMotionValue(142340);
   const rounded = useTransform(
@@ -53,16 +61,29 @@ export function FeatureLiveVisuals({ type }: FeatureLiveVisualsProps) {
                     preserveAspectRatio='none'
                   >
                     <motion.path
-                      initial={{ pathLength: 0, opacity: 0 }}
-                      animate={{
-                        pathLength: [0, 1, 1, 0],
-                        opacity: [0, 1, 1, 0],
-                      }}
-                      transition={{
-                        duration: 6,
-                        repeat: Infinity,
-                        ease: "easeInOut",
-                      }}
+                      // 🚀 فیکس شد: توقف رسم مداوم در موبایل
+                      initial={
+                        isMobile
+                          ? { pathLength: 1, opacity: 1 }
+                          : { pathLength: 0, opacity: 0 }
+                      }
+                      animate={
+                        isMobile
+                          ? { pathLength: 1, opacity: 1 }
+                          : {
+                              pathLength: [0, 1, 1, 0],
+                              opacity: [0, 1, 1, 0],
+                            }
+                      }
+                      transition={
+                        isMobile
+                          ? { duration: 0 }
+                          : {
+                              duration: 6,
+                              repeat: Infinity,
+                              ease: "easeInOut",
+                            }
+                      }
                       d='M0 35 Q15 15, 30 25 T60 5 T90 20 L100 10'
                       fill='none'
                       stroke='currentColor'
@@ -114,16 +135,6 @@ export function FeatureLiveVisuals({ type }: FeatureLiveVisualsProps) {
                       duration: 2,
                       repeat: Infinity,
                       ease: "easeOut",
-                    }}
-                    className='absolute size-6 rounded-full border border-rose-500/50'
-                  />
-                  <motion.div
-                    animate={{ scale: [1, 2.5], opacity: [0.5, 0] }}
-                    transition={{
-                      duration: 2,
-                      repeat: Infinity,
-                      ease: "easeOut",
-                      delay: 1,
                     }}
                     className='absolute size-6 rounded-full border border-rose-500/50'
                   />

@@ -47,6 +47,15 @@ const initialPrices: SimulatedCoin[] = [
 export function LiveMarketPrices({ isActive = true }: { isActive?: boolean }) {
   const { prices } = useSimulatedMarket(initialPrices, isActive);
 
+  // 🚀 فیکس شد: هوک موبایل
+  const [isMobile, setIsMobile] = React.useState(true);
+  React.useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth < 768);
+    handleResize();
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
   return (
     <div className='flex flex-col h-full bg-[#121214] border border-white/5 rounded-xl p-5'>
       <div className='mb-4'>
@@ -79,8 +88,9 @@ export function LiveMarketPrices({ isActive = true }: { isActive?: boolean }) {
             </div>
             <div className='flex flex-col items-end'>
               <motion.span
-                key={coin.initialPrice} // Causes a soft flash effect when updating
-                initial={{ opacity: 0.5 }}
+                // 🚀 فیکس شد: در موبایل کلید را ثابت نگه می‌داریم تا DOM تخریب نشود
+                key={isMobile ? "static" : coin.initialPrice}
+                initial={isMobile ? false : { opacity: 0.5 }}
                 animate={{ opacity: 1 }}
                 className='text-xs font-bold text-foreground'
               >

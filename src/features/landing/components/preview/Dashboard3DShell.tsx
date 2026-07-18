@@ -76,7 +76,7 @@ export function Dashboard3DShell({ children }: Dashboard3DShellProps) {
         />
 
         <div
-          className='absolute inset-0 z-50 pointer-events-none opacity-[0.03] mix-blend-overlay transform-gpu'
+          className='hidden md:block absolute inset-0 z-50 pointer-events-none opacity-[0.03] mix-blend-overlay transform-gpu'
           style={{
             backgroundImage: `url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyBAMAAADsEZWCAAAAGFBMVEUAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAMc/kBAAAACHRSTlMAAAAAAABhGPeXoQAAAIZJREFUOMuV1bENwCAMQ9FwEQ4yQrEB82cgP1UqROrt1L9PsoL/2E4h5aDUI9Qj1CPUo5P/e5z0hZz0hZz0hZz0hZz0hZz0hZz0hZz0hZz0hZz0hZz0hZz0hZz0hZz0hZz0hZz0hZz0hZz0hZz0hZz0hZz0hZz0hZz0hZz0hZz0hZz0hZz0hZz05Z5yCweK6T23AAAAAElFTkSuQmCC")`,
             backgroundSize: "100px 100px",

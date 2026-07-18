@@ -35,17 +35,27 @@ export function DashboardPreviewSection() {
   const sectionRef = React.useRef<HTMLElement>(null);
   const isInView = useInView(sectionRef, { margin: "100px" });
 
+  // 🚀 فیکس شد: جلوگیری از محاسبات سنگین انیمیشن‌های مخفی در موبایل
+  const [isMobile, setIsMobile] = React.useState(true);
+  React.useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth < 768);
+    handleResize();
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
   return (
     <section
       ref={sectionRef}
       className='w-full py-32 relative bg-[#050507] overflow-hidden flex flex-col items-center justify-center min-h-screen'
     >
-      {isInView && (
+      {/* 🚀 فیکس شد: رندر فقط در دسکتاپ تا CPU موبایل درگیر نشود */}
+      {!isMobile && isInView && (
         <div className='absolute inset-0 z-0 pointer-events-none flex items-center justify-center'>
           <motion.div
             animate={{ opacity: [0.15, 0.25, 0.15], scale: [1, 1.1, 1] }}
             transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
-            className='hidden md:absolute absolute w-[600px] h-[600px] bg-primary/40 rounded-full blur-[120px] translate-x-[-60%] translate-y-[-10%] transform-gpu'
+            className='absolute w-[600px] h-[600px] bg-primary/40 rounded-full blur-[120px] translate-x-[-60%] translate-y-[-10%] transform-gpu'
           />
           <motion.div
             animate={{ opacity: [0.1, 0.2, 0.1], scale: [1, 1.05, 1] }}
@@ -55,7 +65,7 @@ export function DashboardPreviewSection() {
               ease: "easeInOut",
               delay: 1,
             }}
-            className='hidden md:absolute absolute w-[500px] h-[500px] bg-blue-500/50 rounded-full blur-[120px] translate-x-[30%] translate-y-[70%] transform-gpu'
+            className='absolute w-[500px] h-[500px] bg-blue-500/50 rounded-full blur-[120px] translate-x-[30%] translate-y-[70%] transform-gpu'
           />
           <motion.div
             animate={{ opacity: [0.2, 0.28, 0.21, 0.3, 0.2] }}
@@ -65,12 +75,12 @@ export function DashboardPreviewSection() {
               ease: "easeInOut",
               delay: 2,
             }}
-            className='hidden md:absolute absolute w-[700px] h-[400px] bg-emerald-500/50 rounded-full blur-[150px] transform-gpu'
+            className='absolute w-[700px] h-[400px] bg-emerald-500/50 rounded-full blur-[150px] transform-gpu'
           />
         </div>
       )}
 
-      <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10'>
+      <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 w-full'>
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -113,10 +123,8 @@ export function DashboardPreviewSection() {
 
       <Dashboard3DShell>
         <LiveTopBar />
-
         <div className='flex-1 p-4 sm:p-5 md:p-8 flex flex-col gap-6 w-full h-full relative z-10 overflow-y-auto md:overflow-hidden bg-[#0c0c0e] scrollbar-thin scrollbar-thumb-white/10'>
           <DashboardSummaryCards isActive={isInView} />
-
           <div className='flex-1 grid grid-cols-1 lg:grid-cols-3 gap-6 min-h-0'>
             <div className='lg:col-span-2 h-full min-h-[300px]'>
               {isInView ? (
@@ -125,7 +133,6 @@ export function DashboardPreviewSection() {
                 <div className='w-full h-full min-h-[300px] rounded-2xl bg-card/20 animate-pulse border border-white/5' />
               )}
             </div>
-
             <div className='lg:col-span-1 h-full min-h-[300px]'>
               {isInView ? (
                 <DynamicLiveMarketPrices isActive={isInView} />

@@ -56,7 +56,7 @@ export function PerformanceChart() {
   }, []);
 
   return (
-    <Card className='rounded-2xl border border-border/60 bg-card/30 backdrop-blur-sm flex flex-col justify-between overflow-hidden h-full'>
+    <Card className='rounded-2xl border border-border/60 bg-zinc-950 md:bg-card/30 backdrop-blur-none md:backdrop-blur-sm flex flex-col justify-between overflow-hidden h-full'>
       <CardHeader className='flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between pb-4'>
         <div>
           <CardTitle className='text-sm font-semibold text-foreground'>

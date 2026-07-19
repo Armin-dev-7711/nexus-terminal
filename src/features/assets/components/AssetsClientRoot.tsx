@@ -1,105 +1,3 @@
-// // src/features/assets/components/AssetsClientRoot.tsx
-// "use client";
-
-// import * as React from "react";
-// import { Plus } from "lucide-react";
-// import { Button } from "@/components/ui/button";
-// import dynamic from "next/dynamic"; // 🚀 وارد کردن داینامیک
-
-// import { columns } from "./columns";
-// import { AssetsTable } from "./AssetsTable";
-// import { AssetsTableSkeleton } from "./AssetsTableSkeleton";
-
-// import { Asset } from "../types";
-// import { mockAssetsData } from "../mocks/assets.mock";
-
-// const AssetActionModals = dynamic(
-//   () => import("./AssetActionModals").then((mod) => mod.AssetActionModals),
-//   { ssr: false },
-// );
-
-// const AssetDetailSheet = dynamic(
-//   () => import("./AssetDetailSheet").then((mod) => mod.AssetDetailSheet),
-//   { ssr: false },
-// );
-
-// export function AssetsClientRoot() {
-//   const [sheetAsset, setSheetAsset] = React.useState<Asset | null>(null);
-//   const [modalConfig, setModalConfig] = React.useState<{
-//     type: "add" | "edit" | "delete" | null;
-//     assetId?: string;
-//   }>({ type: null });
-
-//   const [isLoading, setIsLoading] = React.useState(true);
-//   const [assets, setAssets] = React.useState<Asset[]>([]);
-
-//   React.useEffect(() => {
-//     let mounted = true;
-//     const fetchAssets = async () => {
-//       setIsLoading(true);
-//       await new Promise((resolve) => setTimeout(resolve, 1500));
-//       if (mounted) {
-//         setAssets(mockAssetsData);
-//         setIsLoading(false);
-//       }
-//     };
-//     fetchAssets();
-//     return () => {
-//       mounted = false;
-//     };
-//   }, []);
-
-//   return (
-//     <div className='flex-1 space-y-6 p-6 pt-8 md:p-8'>
-//       <div className='flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4'>
-//         <div className='flex flex-col gap-2'>
-//           <h2 className='text-3xl font-bold tracking-tight text-foreground'>
-//             Assets Portfolio
-//           </h2>
-//           <p className='text-sm text-muted-foreground'>
-//             Manage, track, and analyze your decentralized assets across all
-//             networks.
-//           </p>
-//         </div>
-//         <Button
-//           onClick={() => setModalConfig({ type: "add" })}
-//           className='bg-primary text-primary-foreground hover:bg-primary/90 rounded-xl cursor-pointer w-full sm:w-auto sm:self-auto self-start shadow-md shadow-primary/10'
-//         >
-//           <Plus className='mr-2 size-4' /> Add Asset
-//         </Button>
-//       </div>
-
-//       {isLoading ? (
-//         <AssetsTableSkeleton />
-//       ) : (
-//         <AssetsTable
-//           columns={columns}
-//           data={assets}
-//           onRowClick={setSheetAsset}
-//           onAction={(type, assetId) => setModalConfig({ type, assetId })}
-//           onAddAsset={() => setModalConfig({ type: "add" })}
-//         />
-//       )}
-
-//       {sheetAsset !== null && (
-//         <AssetDetailSheet
-//           asset={sheetAsset}
-//           isOpen={sheetAsset !== null}
-//           onClose={() => setSheetAsset(null)}
-//         />
-//       )}
-
-//       {modalConfig.type !== null && (
-//         <AssetActionModals
-//           type={modalConfig.type}
-//           assetId={modalConfig.assetId}
-//           isOpen={modalConfig.type !== null}
-//           onClose={() => setModalConfig({ type: null })}
-//         />
-//       )}
-//     </div>
-//   );
-// }
 // src/features/assets/components/AssetsClientRoot.tsx
 "use client";
 
@@ -108,14 +6,12 @@ import { Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import dynamic from "next/dynamic";
 
-// 🚀 این‌ها اجزای اصلی صفحه هستند و باید سریع لود شوند
 import { columns } from "./columns";
 import { AssetsTable } from "./AssetsTable";
 import { AssetsTableSkeleton } from "./AssetsTableSkeleton";
 import { Asset } from "../types";
 import { mockAssetsData } from "../mocks/assets.mock";
 
-// 🚀 فیکس شد: مودال‌ها و شیت‌ها که پنهان هستند، به صورت داینامیک و بدون SSR لود شوند
 const AssetActionModals = dynamic(
   () => import("./AssetActionModals").then((mod) => mod.AssetActionModals),
   { ssr: false },
@@ -133,7 +29,6 @@ export function AssetsClientRoot() {
     assetId?: string;
   }>({ type: null });
 
-  // 🚀 ماک سیمولیشن همچنان باقی می‌ماند
   const [isLoading, setIsLoading] = React.useState(true);
   const [assets, setAssets] = React.useState<Asset[]>([]);
 
@@ -141,7 +36,7 @@ export function AssetsClientRoot() {
     let mounted = true;
     const fetchAssets = async () => {
       setIsLoading(true);
-      // ۱.۵ ثانیه تأخیر کلاینتی برای نشان دادن اسکلتونِ جدول
+
       await new Promise((resolve) => setTimeout(resolve, 1500));
       if (mounted) {
         setAssets(mockAssetsData);
@@ -156,7 +51,6 @@ export function AssetsClientRoot() {
 
   return (
     <div className='flex-1 space-y-6 p-6 pt-8 md:p-8 bg-background antialiased'>
-      {/* Header بخش دائم صفحه است و سریع لود می‌شود */}
       <div className='flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4'>
         <div className='flex flex-col gap-2'>
           <h2 className='text-3xl font-bold tracking-tight text-foreground'>
@@ -175,7 +69,6 @@ export function AssetsClientRoot() {
         </Button>
       </div>
 
-      {/* بخش اصلی جدول: تا زمان لود دیتا، اسکلتون نشان می‌دهد */}
       <div className='relative z-0'>
         {isLoading ? (
           <AssetsTableSkeleton />
@@ -190,7 +83,6 @@ export function AssetsClientRoot() {
         )}
       </div>
 
-      {/* 🚀 فیکس شد: این مودال‌ها و شیت‌ها فقط وقتی استیتشان تغییر کرد دانلود می‌شوند */}
       {sheetAsset !== null && (
         <AssetDetailSheet
           asset={sheetAsset}

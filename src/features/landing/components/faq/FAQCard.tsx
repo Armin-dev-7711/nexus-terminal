@@ -22,6 +22,16 @@ interface FAQCardProps {
 export function FAQCard({ item, isOpen, onToggle }: FAQCardProps) {
   const cardRef = React.useRef<HTMLDivElement>(null);
 
+  // 🚀 فیکس شد: اضافه کردن هوک موبایل برای خاموش کردن پردازش‌های سنگین
+  const [isMobile, setIsMobile] = React.useState(true);
+
+  React.useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth < 768);
+    handleResize();
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
   // Spotlight Effect Physics
   const mouseX = useMotionValue(0);
   const mouseY = useMotionValue(0);
@@ -30,7 +40,7 @@ export function FAQCard({ item, isOpen, onToggle }: FAQCardProps) {
   const smoothY = useSpring(mouseY, springConfig);
 
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (window.innerWidth < 768) return;
+    if (isMobile) return;
     if (!cardRef.current) return;
     const rect = cardRef.current.getBoundingClientRect();
     mouseX.set(e.clientX - rect.left);
@@ -47,11 +57,11 @@ export function FAQCard({ item, isOpen, onToggle }: FAQCardProps) {
           ? "rgba(255,255,255,0.03)"
           : "rgba(255,255,255,0.01)",
       }}
-      className='w-full relative group overflow-hidden rounded-2xl border border-white/5 transition-colors duration-500'
+      className='w-full relative group overflow-hidden rounded-2xl border border-white/5 transition-colors duration-500 transform-gpu'
     >
-      {/* 🚀 Spotlight Effect */}
+      {/* 🚀 فیکس شد: جلوگیری از رندر شدن اسپات‌لایت هنگام لمس (Touch) در موبایل */}
       <motion.div
-        className='absolute inset-0 pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-500 z-0'
+        className='hidden md:block absolute inset-0 pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-500 z-0'
         style={{
           background: useMotionTemplate`radial-gradient(400px circle at ${smoothX}px ${smoothY}px, rgba(132,204,34,0.08), transparent 80%)`,
         }}
@@ -59,7 +69,7 @@ export function FAQCard({ item, isOpen, onToggle }: FAQCardProps) {
 
       <button
         onClick={onToggle}
-        className='relative z-10 w-full flex items-start justify-between p-6 md:p-8 text-left outline-none focus-visible:ring-2 focus-visible:ring-primary/50 focus-visible:ring-inset rounded-2xl'
+        className='relative z-10 w-full flex items-start justify-between p-6 md:p-8 text-left outline-none focus-visible:ring-2 focus-visible:ring-primary/50 focus-visible:ring-inset rounded-2xl cursor-pointer'
       >
         <div className='flex flex-col gap-3 pr-6 sm:pr-8 w-full'>
           <div className='flex flex-wrap items-center gap-2 sm:gap-3'>
@@ -95,16 +105,30 @@ export function FAQCard({ item, isOpen, onToggle }: FAQCardProps) {
       <AnimatePresence initial={false}>
         {isOpen && (
           <motion.div
-            initial={{ height: 0, opacity: 0, filter: "blur(4px)" }}
-            animate={{ height: "auto", opacity: 1, filter: "blur(0px)" }}
-            exit={{ height: 0, opacity: 0, filter: "blur(4px)" }}
+            // 🚀 فیکس شد: فیلتر بلر (blur) که قاتل GPU است، از نسخه موبایل حذف شد
+            initial={{
+              height: 0,
+              opacity: 0,
+              filter: isMobile ? "none" : "blur(4px)",
+            }}
+            animate={{
+              height: "auto",
+              opacity: 1,
+              filter: isMobile ? "none" : "blur(0px)",
+            }}
+            exit={{
+              height: 0,
+              opacity: 0,
+              filter: isMobile ? "none" : "blur(4px)",
+            }}
             transition={{
               type: "spring",
               stiffness: 100,
               damping: 20,
               opacity: { duration: 0.2 },
             }}
-            className='relative z-10 overflow-hidden'
+            // 🚀 فیکس شد: استفاده از will-change برای خبر دادن به مرورگر قبل از انیمیشن
+            className='relative z-10 overflow-hidden will-change-[height,opacity]'
           >
             <div className='px-6 pb-6 md:px-8 md:pb-8 pt-0 flex flex-col gap-6'>
               <p className='text-sm text-muted-foreground leading-relaxed md:leading-loose'>

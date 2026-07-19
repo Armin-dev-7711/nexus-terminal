@@ -41,7 +41,8 @@ export function FooterTerminal() {
   return (
     <motion.div
       ref={containerRef}
-      className='w-full h-[220px] rounded-xl overflow-hidden bg-[#0c0c0e]/80 border border-white/10 backdrop-blur-md shadow-2xl flex flex-col'
+      // 🚀 فیکس شد: در موبایل پس‌زمینه جامد (zinc-950) و بدون بلر است
+      className='w-full h-[220px] rounded-xl overflow-hidden bg-zinc-950 md:bg-[#0c0c0e]/80 border border-white/10 backdrop-blur-none md:backdrop-blur-md shadow-2xl flex flex-col'
     >
       {/* Mac-style Header */}
       <div className='h-8 bg-white/[0.03] border-b border-white/5 flex items-center px-3 gap-2 shrink-0'>
@@ -63,9 +64,10 @@ export function FooterTerminal() {
             className='flex items-start'
           >
             <span className='text-muted-foreground/50 mr-2'>
-              {log.split(" ")[0]}
+              {/* 🚀 فیکس شد: گارد امنیتی در صورت خالی بودن لاگ در لحظه رندر */}
+              {log ? log.split(" ")[0] : ""}
             </span>
-            <span>{log.substring(2)}</span>
+            <span>{log ? log.substring(2) : ""}</span>
           </motion.div>
         ))}
         {/* Blinking Cursor */}
@@ -76,7 +78,7 @@ export function FooterTerminal() {
         />
 
         {/* Gradient fade at bottom to hide overflow elegantly */}
-        <div className='absolute bottom-0 left-0 right-0 h-8 bg-gradient-to-t from-[#0c0c0e]/80 to-transparent pointer-events-none' />
+        <div className='absolute bottom-0 left-0 right-0 h-8 bg-gradient-to-t from-zinc-950 md:from-[#0c0c0e]/80 to-transparent pointer-events-none' />
       </div>
     </motion.div>
   );

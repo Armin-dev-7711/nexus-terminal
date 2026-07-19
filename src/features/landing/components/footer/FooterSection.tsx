@@ -14,6 +14,7 @@ import {
 import { ArrowRight, MessageSquare, Terminal } from "lucide-react";
 import { FooterTerminal } from "./FooterTerminal";
 
+// ... (آیکون‌ها و لینک‌ها بدون تغییر می‌مانند) ...
 const GithubIcon = (props: React.SVGProps<SVGSVGElement>) => (
   <svg
     xmlns='http://www.w3.org/2000/svg'
@@ -31,7 +32,6 @@ const GithubIcon = (props: React.SVGProps<SVGSVGElement>) => (
     <path d='M9 18c-4.51 2-5-2-7-2' />
   </svg>
 );
-
 const TwitterIcon = (props: React.SVGProps<SVGSVGElement>) => (
   <svg
     xmlns='http://www.w3.org/2000/svg'
@@ -48,7 +48,6 @@ const TwitterIcon = (props: React.SVGProps<SVGSVGElement>) => (
     <path d='M22 4s-.7 2.1-2 3.4c1.6 10-9.4 17.3-18 11.6 2.2.1 4.4-.6 6-2C3 15.5.5 9.6 3 5c2.2 2.6 5.6 4.1 9 4-.9-4.2 4-6.6 7-3.8 1.1 0 3-1.2 3-1.2z' />
   </svg>
 );
-
 const LinkedinIcon = (props: React.SVGProps<SVGSVGElement>) => (
   <svg
     xmlns='http://www.w3.org/2000/svg'
@@ -86,10 +85,8 @@ const SOCIAL_LINKS = [
 
 export function FooterSection() {
   const containerRef = React.useRef<HTMLSelectElement>(null);
-
   const isInView = useInView(containerRef, { margin: "200px" });
 
-  // Mouse Parallax & Spotlight Physics
   const mouseX = useMotionValue(0.5);
   const mouseY = useMotionValue(0.5);
   const springConfig = { damping: 40, stiffness: 150 };
@@ -111,13 +108,11 @@ export function FooterSection() {
     mouseY.set((e.clientY - rect.top) / rect.height);
   };
 
-  // Live System Data Simulation
   const [latency, setLatency] = React.useState(11);
   const [utcTime, setUtcTime] = React.useState("");
 
   React.useEffect(() => {
     if (!isInView) return;
-
     const timeInterval = setInterval(() => {
       setUtcTime(new Date().toUTCString().replace(" GMT", ""));
     }, 1000);
@@ -130,7 +125,6 @@ export function FooterSection() {
     };
   }, [isInView]);
 
-  // Easter Egg Logic
   const [clicks, setClicks] = React.useState(0);
   const [devMode, setDevMode] = React.useState(false);
 
@@ -175,18 +169,17 @@ export function FooterSection() {
       onMouseMove={handleMouseMove}
       className='w-full min-h-[110vh] relative bg-[#050507] overflow-hidden flex flex-col items-center justify-between pt-32 pb-12 select-none'
     >
-      {/* 1. Digital Horizon */}
       <div className='absolute top-0 inset-x-0 flex justify-center'>
         <div className='w-full h-px bg-gradient-to-r from-transparent via-white/[0.15] to-transparent animate-pulse' />
         <div className='absolute top-0 w-1/2 h-[2px] bg-gradient-to-r from-transparent via-primary/40 to-transparent blur-sm animate-pulse' />
       </div>
 
-      {/* 2. Background Ambiance & Spotlight */}
       <div className='absolute inset-0 z-0 pointer-events-none [mask-image:linear-gradient(to_bottom,transparent_0%,black_20%,black_90%,transparent_100%)]'>
-        <div className="absolute inset-0 opacity-[0.03] mix-blend-screen bg-[url('data:image/svg+xml,%3Csvg width=\'60\' height=\'60\' viewBox=\'0 0 60 60\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cpath d=\'M 60 0 L 0 0 0 60\' fill=\'none\' stroke=\'white\' strokeWidth=\'1\'/%3E%3C/svg%3E')]" />
+        {/* 🚀 فیکس شد: مخفی کردن تمام لایه‌های ترکیبی در موبایل با hidden md:block */}
+        <div className="hidden md:block absolute inset-0 opacity-[0.03] mix-blend-screen bg-[url('data:image/svg+xml,%3Csvg width=\'60\' height=\'60\' viewBox=\'0 0 60 60\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cpath d=\'M 60 0 L 0 0 0 60\' fill=\'none\' stroke=\'white\' strokeWidth=\'1\'/%3E%3C/svg%3E')]" />
 
         <div
-          className='absolute inset-0 opacity-[0.03] mix-blend-overlay transform-gpu'
+          className='hidden md:block absolute inset-0 opacity-[0.03] mix-blend-overlay transform-gpu'
           style={{
             backgroundImage: `url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyBAMAAADsEZWCAAAAGFBMVEUAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAMc/kBAAAACHRSTlMAAAAAAABhGPeXoQAAAIZJREFUOMuV1bENwCAMQ9FwEQ4yQrEB82cgP1UqROrt1L9PsoL/2E4h5aDUI9Qj1CPUo5P/e5z0hZz0hZz0hZz0hZz0hZz0hZz0hZz0hZz0hZz0hZz0hZz0hZz0hZz0hZz0hZz0hZz0hZz0hZz0hZz0hZz0hZz0hZz0hZz0hZz0hZz0hZz0hZz05Z5yCweK6T23AAAAAElFTkSuQmCC")`,
             backgroundSize: "100px 100px",
@@ -195,21 +188,19 @@ export function FooterSection() {
 
         {isInView && (
           <motion.div
-            className='absolute inset-0 opacity-40 mix-blend-screen blur-[120px] transform-gpu'
+            className='hidden md:block absolute inset-0 opacity-40 mix-blend-screen blur-[120px] transform-gpu'
             style={{ background: spotlightBackground }}
           />
         )}
-        <div className='absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[600px] bg-primary/[0.02] rounded-full blur-[200px]' />
+        <div className='hidden md:block absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[600px] bg-primary/[0.02] rounded-full blur-[200px]' />
       </div>
 
-      {/* 3. Background Watermark */}
       <div className='absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-0 pointer-events-none flex items-center justify-center w-full'>
         <span className='text-[18vw] font-black text-white/[0.02] tracking-tighter mix-blend-plus-lighter'>
           NEXUS
         </span>
       </div>
 
-      {/* 4. Floating Tech Metrics */}
       <div className='absolute inset-0 pointer-events-none z-10 hidden lg:block'>
         <motion.div
           style={{ x: parallaxX, y: parallaxY }}
@@ -227,7 +218,6 @@ export function FooterSection() {
         </motion.div>
       </div>
 
-      {/* 5. Main Content Container */}
       <div className='max-w-7xl mx-auto px-6 w-full relative z-20 flex-1 flex flex-col justify-center mt-12'>
         <motion.div
           initial='hidden'
@@ -343,7 +333,6 @@ export function FooterSection() {
         </motion.div>
       </div>
 
-      {/* 6. Final Message & Copyright */}
       <motion.div
         initial={{ opacity: 0 }}
         whileInView={{ opacity: 1 }}
@@ -369,7 +358,6 @@ export function FooterSection() {
         </div>
       </motion.div>
 
-      {/* Easter Egg Modal */}
       <AnimatePresence>
         {devMode && (
           <motion.div

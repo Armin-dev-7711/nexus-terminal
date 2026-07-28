@@ -13,7 +13,8 @@ import {
   TooltipContentProps,
 } from "recharts";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { mockMultiChartData } from "@/features/dashboard/mocks/dashboard.mock";
+import { useAssetsData } from "@/features/assets/hooks/useAssets";
+import { Loader2 } from "lucide-react";
 import {
   NameType,
   ValueType,
@@ -34,7 +35,7 @@ const DashboardCustomTooltip = ({
           <div className='flex items-center justify-between gap-6 text-xs'>
             <span className='text-muted-foreground'>Portfolio Value:</span>
             <span className='font-bold text-[#a3e635]'>
-              ${payload[0]?.value?.toLocaleString()}
+              ${(payload[0]?.value as number)?.toLocaleString("en-US", { maximumFractionDigits: 0 })}
             </span>
           </div>
         </div>
@@ -44,9 +45,16 @@ const DashboardCustomTooltip = ({
   return null;
 };
 
+// A simple predictable pseudo-random generator
+const pseudoRandom = (seed: number) => {
+  const x = Math.sin(seed++) * 10000;
+  return x - Math.floor(x);
+};
+
 export function PerformanceChart() {
   const [timeframe, setTimeframe] = React.useState("1m");
   const [isMobile, setIsMobile] = React.useState(true);
+  const { data: assets = [], isLoading } = useAssetsData();
 
   React.useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth < 768);
@@ -54,6 +62,47 @@ export function PerformanceChart() {
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
+
+  const chartData = React.useMemo(() => {
+    const currentBalance = assets.reduce(
+      (acc, asset) => acc + asset.holdingsAmount * asset.price,
+      0
+    );
+
+    if (currentBalance === 0) {
+      return [];
+    }
+
+    const generateSimulatedData = (
+      points: number,
+      variance: number,
+      labels: string[]
+    ) => {
+      const data = [];
+      let currentValue = currentBalance / (1 + variance / 2); // Start lower
+      for (let i = 0; i < points - 1; i++) {
+        data.push({ name: labels[i], value: currentValue });
+        // Calculate next value with a pseudo-random step
+        const randomStep = pseudoRandom(currentBalance + i) * variance - variance / 2;
+        currentValue = currentValue * (1 + randomStep);
+      }
+      // Guarantee the last point is exactly the current balance
+      data.push({ name: labels[points - 1], value: currentBalance });
+      return data;
+    };
+
+    switch (timeframe) {
+      case "1d":
+        return generateSimulatedData(6, 0.05, ["00:00", "04:00", "08:00", "12:00", "16:00", "Now"]);
+      case "1w":
+        return generateSimulatedData(7, 0.1, ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]);
+      case "1m":
+        return generateSimulatedData(6, 0.15, ["Week 1", "Week 2", "Week 3", "Week 4", "Week 5", "Now"]);
+      case "1y":
+      default:
+        return generateSimulatedData(5, 0.4, ["Q1", "Q2", "Q3", "Q4", "Now"]);
+    }
+  }, [assets, timeframe]);
 
   return (
     <Card className='rounded-2xl border border-border/60 bg-zinc-950 md:bg-card/30 backdrop-blur-none md:backdrop-blur-sm flex flex-col justify-between overflow-hidden h-full'>
@@ -85,71 +134,79 @@ export function PerformanceChart() {
       </CardHeader>
 
       <CardContent className='h-72 w-full pt-2 pr-4 pl-0'>
-        {/* 🚀 اضافه کردن minWidth برای جلوگیری از عرض صفر در زمان تغییر سایز */}
-        <ResponsiveContainer width='100%' height='100%' minWidth={10}>
-          <AreaChart
-            // 🚀 کلید طلایی: نابود کردن و ساخت مجدد چارت در لحظه تغییر سایز برای جلوگیری از ارور split
-            key={isMobile ? "chart-mobile" : "chart-desktop"}
-            data={mockMultiChartData[timeframe]}
-            margin={{ top: 10, right: 10, left: -20, bottom: 0 }}
-          >
-            <defs>
-              <linearGradient id='colorValueDash' x1='0' y1='0' x2='0' y2='1'>
-                <stop offset='5%' stopColor='#a3e635' stopOpacity={0.3} />
-                <stop offset='95%' stopColor='#a3e635' stopOpacity={0} />
-              </linearGradient>
-            </defs>
+        {isLoading ? (
+          <div className='flex h-full w-full items-center justify-center'>
+            <Loader2 className='size-6 animate-spin text-muted-foreground/50' />
+          </div>
+        ) : chartData.length === 0 ? (
+          <div className='flex h-full w-full items-center justify-center text-sm text-muted-foreground'>
+            Add assets to see performance data
+          </div>
+        ) : (
+          <ResponsiveContainer width='100%' height='100%' minWidth={10}>
+            <AreaChart
+              key={isMobile ? "chart-mobile" : "chart-desktop"}
+              data={chartData}
+              margin={{ top: 10, right: 10, left: -20, bottom: 0 }}
+            >
+              <defs>
+                <linearGradient id='colorValueDash' x1='0' y1='0' x2='0' y2='1'>
+                  <stop offset='5%' stopColor='#a3e635' stopOpacity={0.3} />
+                  <stop offset='95%' stopColor='#a3e635' stopOpacity={0} />
+                </linearGradient>
+              </defs>
 
-            <CartesianGrid
-              strokeDasharray='4 4'
-              vertical={true}
-              horizontal={true}
-              stroke='#27272a'
-              opacity={0.6}
-            />
+              <CartesianGrid
+                strokeDasharray='4 4'
+                vertical={true}
+                horizontal={true}
+                stroke='#27272a'
+                opacity={0.6}
+              />
 
-            <XAxis
-              dataKey='name'
-              stroke='#a1a1aa'
-              fontSize={10}
-              tickLine={false}
-              axisLine={false}
-              dy={10}
-            />
-            <YAxis
-              stroke='#a1a1aa'
-              fontSize={10}
-              tickLine={false}
-              axisLine={false}
-              tickFormatter={(value) => `$${(value / 1000).toFixed(0)}k`}
-            />
+              <XAxis
+                dataKey='name'
+                stroke='#a1a1aa'
+                fontSize={10}
+                tickLine={false}
+                axisLine={false}
+                dy={10}
+              />
+              <YAxis
+                stroke='#a1a1aa'
+                fontSize={10}
+                tickLine={false}
+                axisLine={false}
+                tickFormatter={(value) => `$${(value / 1000).toFixed(0)}k`}
+              />
 
-            <Tooltip
-              content={DashboardCustomTooltip}
-              cursor={{
-                stroke: "#3f3f46",
-                strokeWidth: 1,
-                strokeDasharray: "4 4",
-              }}
-            />
+              <Tooltip
+                content={DashboardCustomTooltip}
+                cursor={{
+                  stroke: "#3f3f46",
+                  strokeWidth: 1,
+                  strokeDasharray: "4 4",
+                }}
+              />
 
-            <Area
-              type='monotone'
-              dataKey='value'
-              stroke='#a3e635'
-              strokeWidth={2.5}
-              fillOpacity={1}
-              fill='url(#colorValueDash)'
-              isAnimationActive={!isMobile}
-              activeDot={{
-                r: 6,
-                strokeWidth: 2,
-                stroke: "#18181b",
-                fill: "#a3e635",
-              }}
-            />
-          </AreaChart>
-        </ResponsiveContainer>
+              <Area
+                type='monotone'
+                dataKey='value'
+                stroke='#a3e635'
+                strokeWidth={2.5}
+                fillOpacity={1}
+                fill='url(#colorValueDash)'
+                isAnimationActive={!isMobile}
+                activeDot={{
+                  r: 6,
+                  strokeWidth: 2,
+                  stroke: "#18181b",
+                  fill: "#a3e635",
+                }}
+              />
+            </AreaChart>
+          </ResponsiveContainer>
+        )}
       </CardContent>
     </Card>
   );

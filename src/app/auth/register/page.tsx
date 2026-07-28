@@ -1,6 +1,8 @@
 //src/app/auth/register/page.tsx
 import { Metadata } from "next";
 import { RegisterForm } from "@/features/auth/components/RegisterForm";
+import { Suspense } from "react";
+import DashboardLoading from "@/app/loading";
 
 export const metadata: Metadata = {
   title: "Create Master Key | NEXUS Terminal",
@@ -9,5 +11,9 @@ export const metadata: Metadata = {
 };
 
 export default function RegisterPage() {
-  return <RegisterForm />;
+  return (
+    <Suspense fallback={<DashboardLoading />}>
+      <RegisterForm />
+    </Suspense>
+  );
 }

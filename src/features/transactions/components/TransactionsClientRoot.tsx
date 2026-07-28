@@ -10,8 +10,7 @@ import { columns } from "./columns";
 import { TransactionsTable } from "./TransactionsTable";
 import { TransactionsTableSkeleton } from "./TransactionsTableSkeleton";
 import { TransactionActionType } from "./TransactionActionModals";
-
-import { mockTransactionsData } from "../mocks/transactions.mock";
+import { useTransactionsData } from "../hooks/useTransactions";
 import { TransactionDetail } from "../types";
 
 const TransactionReceipt = dynamic(
@@ -36,26 +35,7 @@ export function TransactionsClientRoot() {
     id?: string;
   }>({ type: null });
 
-  const [isLoading, setIsLoading] = React.useState(true);
-  const [transactions, setTransactions] = React.useState<TransactionDetail[]>(
-    [],
-  );
-
-  React.useEffect(() => {
-    let mounted = true;
-    const fetchTransactions = async () => {
-      setIsLoading(true);
-      await new Promise((resolve) => setTimeout(resolve, 1500));
-      if (mounted) {
-        setTransactions(mockTransactionsData);
-        setIsLoading(false);
-      }
-    };
-    fetchTransactions();
-    return () => {
-      mounted = false;
-    };
-  }, []);
+  const { data: transactions = [], isLoading } = useTransactionsData();
 
   const handleAction = (actionType: "edit" | "delete" | "view", id: string) => {
     if (actionType === "view") {

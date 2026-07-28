@@ -122,7 +122,7 @@ export const columns: ColumnDef<Asset>[] = [
         style: "currency",
         currency: "USD",
         minimumFractionDigits: 2,
-        maximumFractionDigits: 6,
+        maximumFractionDigits: 2,
       }).format(amount);
 
       return <div className=' text-sm font-medium pl-4'>{formatted}</div>;

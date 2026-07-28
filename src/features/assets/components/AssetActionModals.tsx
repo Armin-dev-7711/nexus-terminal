@@ -55,6 +55,7 @@ export function AssetActionModals({
     type,
     isOpen,
     onClose,
+    assetId
   );
 
   return (
@@ -62,7 +63,7 @@ export function AssetActionModals({
       open={isOpen}
       onOpenChange={(open) => !isPending && !open && onClose()}
     >
-      <DialogContent className='sm:max-w-[425px] border-border/60 bg-card/95 backdrop-blur-xl rounded-2xl'>
+      <DialogContent className="sm:max-w-[425px] border-border/60 bg-card/95 backdrop-blur-xl rounded-2xl">
         <DialogHeader>
           <DialogTitle
             className={isDelete ? "text-destructive" : "text-foreground"}
@@ -71,47 +72,47 @@ export function AssetActionModals({
             {type === "edit" && "Edit Asset Details"}
             {type === "delete" && "Remove Asset"}
           </DialogTitle>
-          <DialogDescription className='text-xs'>
+          <DialogDescription className="text-xs">
             {isDelete
               ? "Are you sure you want to remove this asset? This action cannot be undone."
               : "Fill in the details below to update your portfolio ledger."}
           </DialogDescription>
         </DialogHeader>
 
-        <div className='py-2'>
+        <div className="py-2">
           {isDelete ? (
-            <div className='flex justify-end gap-3 mt-4'>
+            <div className="flex justify-end gap-3 mt-4">
               <Button
-                variant='outline'
+                variant="outline"
                 onClick={onClose}
                 disabled={isPending}
-                className='rounded-xl border-border/60'
+                className="rounded-xl border-border/60"
               >
                 Cancel
               </Button>
               <Button
-                variant='destructive'
+                variant="destructive"
                 disabled={isPending}
                 onClick={handleDelete}
-                className='rounded-xl'
+                className="rounded-xl"
               >
                 {isPending ? (
-                  <Loader2 className='size-4 animate-spin' />
+                  <Loader2 className="size-4 animate-spin" />
                 ) : (
                   "Confirm Deletion"
                 )}
               </Button>
             </div>
           ) : (
-            <form id='asset-form' onSubmit={onSubmit}>
-              <FieldGroup className='space-y-4'>
+            <form id="asset-form" onSubmit={onSubmit}>
+              <FieldGroup className="space-y-4">
                 {/* 1. Network Select */}
                 <Controller
-                  name='network'
+                  name="network"
                   control={form.control}
                   render={({ field, fieldState }) => (
                     <Field data-invalid={fieldState.invalid}>
-                      <FieldLabel className='text-[11px] font-medium text-muted-foreground uppercase tracking-wider '>
+                      <FieldLabel className="text-[11px] font-medium text-muted-foreground uppercase tracking-wider ">
                         Asset Network
                       </FieldLabel>
                       <Select
@@ -121,16 +122,16 @@ export function AssetActionModals({
                       >
                         <SelectTrigger
                           aria-invalid={fieldState.invalid}
-                          className='h-10 rounded-xl border-border bg-muted/10 text-xs focus:ring-1 focus:ring-primary focus:border-primary'
+                          className="h-10 rounded-xl border-border bg-muted/10 text-xs focus:ring-1 focus:ring-primary focus:border-primary"
                         >
-                          <SelectValue placeholder='Select network (e.g., Ethereum)' />
+                          <SelectValue placeholder="Select network (e.g., Ethereum)" />
                         </SelectTrigger>
-                        <SelectContent className='rounded-xl border-border/80 bg-popover/95 backdrop-blur-md'>
+                        <SelectContent className="rounded-xl border-border/80 bg-popover/95 backdrop-blur-md">
                           {NETWORKS.map((net) => (
                             <SelectItem
                               key={net}
                               value={net}
-                              className='text-xs rounded-lg cursor-pointer focus:bg-muted/50'
+                              className="text-xs rounded-lg cursor-pointer focus:bg-muted/50"
                             >
                               {net}
                             </SelectItem>
@@ -140,7 +141,7 @@ export function AssetActionModals({
                       {fieldState.invalid && (
                         <FieldError
                           errors={[fieldState.error]}
-                          className='text-[10px]'
+                          className="text-[10px]"
                         />
                       )}
                     </Field>
@@ -149,19 +150,19 @@ export function AssetActionModals({
 
                 {/* 2. Ticker / Symbol */}
                 <Controller
-                  name='symbol'
+                  name="symbol"
                   control={form.control}
                   render={({ field, fieldState }) => (
                     <Field data-invalid={fieldState.invalid}>
-                      <FieldLabel className='text-[11px] font-medium text-muted-foreground uppercase tracking-wider '>
+                      <FieldLabel className="text-[11px] font-medium text-muted-foreground uppercase tracking-wider ">
                         Ticker / Symbol
                       </FieldLabel>
                       <Input
                         {...field}
-                        placeholder='BTC, ETH, SOL...'
+                        placeholder="BTC, ETH, SOL..."
                         disabled={isPending}
                         aria-invalid={fieldState.invalid}
-                        className='h-10 rounded-xl border-border bg-muted/10 text-xs  uppercase focus-visible:ring-1 focus-visible:ring-primary'
+                        className="h-10 rounded-xl border-border bg-muted/10 text-xs  uppercase focus-visible:ring-1 focus-visible:ring-primary"
                         onChange={(e) =>
                           field.onChange(e.target.value.toUpperCase())
                         }
@@ -169,27 +170,27 @@ export function AssetActionModals({
                       {fieldState.invalid && (
                         <FieldError
                           errors={[fieldState.error]}
-                          className='text-[10px]'
+                          className="text-[10px]"
                         />
                       )}
                     </Field>
                   )}
                 />
 
-                <div className='grid grid-cols-2 gap-4'>
+                <div className="grid grid-cols-2 gap-4">
                   {/* 3. Holdings Volume */}
                   <Controller
-                    name='amount'
+                    name="amount"
                     control={form.control}
                     render={({ field, fieldState }) => (
                       <Field data-invalid={fieldState.invalid}>
-                        <FieldLabel className='text-[11px] font-medium text-muted-foreground uppercase tracking-wider '>
+                        <FieldLabel className="text-[11px] font-medium text-muted-foreground uppercase tracking-wider ">
                           Holdings Volume
                         </FieldLabel>
-                        <InputGroup className='h-10 rounded-xl border border-border/60 bg-muted/10 overflow-hidden focus-within:ring-1 focus-within:ring-primary focus-within:border-primary transition-all pr-1'>
-                          <InputGroupAddon className='bg-transparent border-r-0 pr-2'>
+                        <InputGroup className="h-10 rounded-xl border border-border/60 bg-muted/10 overflow-hidden focus-within:ring-1 focus-within:ring-primary focus-within:border-primary transition-all pr-1">
+                          <InputGroupAddon className="bg-transparent border-r-0 pr-2">
                             <InputGroupText>
-                              <Coins className='size-4 text-muted-foreground/70' />
+                              <Coins className="size-4 text-muted-foreground/70" />
                             </InputGroupText>
                           </InputGroupAddon>
                           <Input
@@ -198,18 +199,18 @@ export function AssetActionModals({
                             onBlur={field.onBlur}
                             ref={field.ref}
                             value={(field.value as string | number) ?? ""}
-                            type='number'
-                            step='any'
-                            placeholder='0.00'
+                            type="number"
+                            step="any"
+                            placeholder="0.00"
                             disabled={isPending}
                             aria-invalid={fieldState.invalid}
-                            className='border-0 bg-transparent text-xs  focus-visible:ring-0 shadow-none pl-2 [&::-webkit-inner-spin-button]:appearance-none [&::-moz-appearance]:textfield'
+                            className="border-0 bg-transparent text-xs  focus-visible:ring-0 shadow-none pl-2 [&::-webkit-inner-spin-button]:appearance-none [&::-moz-appearance]:textfield"
                           />
                         </InputGroup>
                         {fieldState.invalid && (
                           <FieldError
                             errors={[fieldState.error]}
-                            className='text-[10px]'
+                            className="text-[10px]"
                           />
                         )}
                       </Field>
@@ -218,17 +219,17 @@ export function AssetActionModals({
 
                   {/* 4. Purchase Price */}
                   <Controller
-                    name='purchasePrice'
+                    name="purchasePrice"
                     control={form.control}
                     render={({ field, fieldState }) => (
                       <Field data-invalid={fieldState.invalid}>
-                        <FieldLabel className='text-[11px] font-medium text-muted-foreground uppercase tracking-wider '>
+                        <FieldLabel className="text-[11px] font-medium text-muted-foreground uppercase tracking-wider ">
                           Buy Price (USD)
                         </FieldLabel>
-                        <InputGroup className='h-10 rounded-xl border border-border/60 bg-muted/10 overflow-hidden focus-within:ring-1 focus-within:ring-primary focus-within:border-primary transition-all pr-1'>
-                          <InputGroupAddon className='bg-transparent border-r-0 pr-2'>
+                        <InputGroup className="h-10 rounded-xl border border-border/60 bg-muted/10 overflow-hidden focus-within:ring-1 focus-within:ring-primary focus-within:border-primary transition-all pr-1">
+                          <InputGroupAddon className="bg-transparent border-r-0 pr-2">
                             <InputGroupText>
-                              <DollarSign className='size-4 text-muted-foreground/70' />
+                              <DollarSign className="size-4 text-muted-foreground/70" />
                             </InputGroupText>
                           </InputGroupAddon>
                           <Input
@@ -237,18 +238,18 @@ export function AssetActionModals({
                             onBlur={field.onBlur}
                             ref={field.ref}
                             value={(field.value as string | number) ?? ""}
-                            type='number'
-                            step='any'
-                            placeholder='0.00'
+                            type="number"
+                            step="any"
+                            placeholder="0.00"
                             disabled={isPending}
                             aria-invalid={fieldState.invalid}
-                            className='border-0 bg-transparent text-xs  focus-visible:ring-0 shadow-none pl-2 [&::-webkit-inner-spin-button]:appearance-none [&::-moz-appearance]:textfield'
+                            className="border-0 bg-transparent text-xs  focus-visible:ring-0 shadow-none pl-2 [&::-webkit-inner-spin-button]:appearance-none [&::-moz-appearance]:textfield"
                           />
                         </InputGroup>
                         {fieldState.invalid && (
                           <FieldError
                             errors={[fieldState.error]}
-                            className='text-[10px]'
+                            className="text-[10px]"
                           />
                         )}
                       </Field>
@@ -258,27 +259,27 @@ export function AssetActionModals({
               </FieldGroup>
 
               {/* Footer Actions */}
-              <div className='flex items-center justify-end gap-3 pt-6'>
+              <div className="flex items-center justify-end gap-3 pt-6">
                 <Button
-                  type='button'
-                  variant='ghost'
-                  size='sm'
+                  type="button"
+                  variant="ghost"
+                  size="sm"
                   onClick={onClose}
                   disabled={isPending}
-                  className='rounded-xl text-xs cursor-pointer'
+                  className="rounded-xl text-xs cursor-pointer"
                 >
                   Cancel
                 </Button>
                 <Button
-                  type='submit'
-                  form='asset-form'
-                  size='sm'
+                  type="submit"
+                  form="asset-form"
+                  size="sm"
                   disabled={isPending}
-                  className='bg-primary text-primary-foreground hover:bg-primary/90 rounded-xl text-xs px-6 cursor-pointer shadow-md shadow-primary/10 transition-all'
+                  className="bg-primary text-primary-foreground hover:bg-primary/90 rounded-xl text-xs px-6 cursor-pointer shadow-md shadow-primary/10 transition-all"
                 >
                   {isPending ? (
                     <>
-                      <Loader2 className='mr-2 size-3.5 animate-spin' />{" "}
+                      <Loader2 className="mr-2 size-3.5 animate-spin" />{" "}
                       Processing
                     </>
                   ) : (

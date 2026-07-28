@@ -3,7 +3,7 @@
 
 import * as React from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import {
   Bell,
   Sun,
@@ -12,6 +12,13 @@ import {
   Activity,
   ShieldAlert,
   Check,
+  LayoutDashboard,
+  Wallet,
+  ArrowLeftRight,
+  TrendingUp,
+  Settings,
+  Coins,
+  Receipt,
 } from "lucide-react";
 import { useTheme } from "next-themes";
 import { formatDistanceToNow } from "date-fns";
@@ -46,6 +53,8 @@ import { cn } from "@/lib/utils";
 
 import { useNotifications } from "@/features/notifications/context/NotificationContext";
 import { NotificationCategory } from "@/features/notifications/types";
+import { useAssetsData } from "@/features/assets/hooks/useAssets";
+import { useTransactionsData } from "@/features/transactions/hooks/useTransactions";
 
 const getMiniIcon = (category: NotificationCategory) => {
   switch (category) {
@@ -60,13 +69,25 @@ const getMiniIcon = (category: NotificationCategory) => {
 
 export default function Header() {
   const pathname = usePathname();
+  const router = useRouter();
   const { theme, setTheme } = useTheme();
   const [open, setOpen] = React.useState(false);
 
   const { notifications, unreadCount, markAllAsRead, viewNotification } =
     useNotifications();
 
+  const { data: assets = [] } = useAssetsData();
+  const { data: transactions = [] } = useTransactionsData();
+
   const segments = pathname.split("/").filter(Boolean);
+
+  const handleNavigate = React.useCallback(
+    (path: string) => {
+      setOpen(false);
+      router.push(path);
+    },
+    [router]
+  );
 
   React.useEffect(() => {
     const down = (e: KeyboardEvent) => {
@@ -83,7 +104,6 @@ export default function Header() {
     <>
       <header className='sticky top-0 z-30 flex h-16 w-full shrink-0 items-center justify-between border-b border-border bg-background/80 px-4 md:px-6 backdrop-blur-md gap-4'>
         <div className='flex items-center gap-3 min-w-0'>
-          {/* 🚀 فیکس شد: اضافه شدن aria-label برای سایدبار */}
           <SidebarTrigger
             aria-label='Toggle Sidebar'
             className='cursor-pointer text-muted-foreground hover:text-foreground transition-colors shrink-0'
@@ -144,7 +164,6 @@ export default function Header() {
         </div>
 
         <div className='flex items-center gap-2 md:gap-3 shrink-0'>
-          {/* 🚀 فیکس شد: aria-label دکمه سرچ موبایل */}
           <Button
             variant='ghost'
             size='icon'
@@ -165,7 +184,6 @@ export default function Header() {
             </span>
           </div>
 
-          {/* 🚀 فیکس شد: aria-label دکمه تغییر تم */}
           <Button
             variant='ghost'
             size='icon'
@@ -179,7 +197,6 @@ export default function Header() {
 
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              {/* 🚀 فیکس شد: aria-label دکمه نوتیفیکیشن‌ها */}
               <Button
                 variant='ghost'
                 size='icon'
@@ -287,45 +304,182 @@ export default function Header() {
         </div>
       </header>
 
-      {/* 🚀 فیکس شد: محتوای سنگین مودالِ سرچ فقط زمانی رندر می‌شود که کاربر آن را باز کند (Lazy Evaluation) */}
+      {/* 🚀 Dynamic Global Search Command Dialog (⌘K / Ctrl+K) */}
       <CommandDialog open={open} onOpenChange={setOpen}>
         {open && (
           <Command className='border-0 bg-transparent shadow-none'>
             <CommandInput
-              placeholder='Type a command or search...'
+              placeholder='Type a command, asset, or transaction...'
               className='h-11 bg-transparent text-sm focus:ring-0'
             />
-            <div className='mb-2 mt-4 h-px bg-border/40 mx-2' />
+            <div className='mb-2 mt-2 h-px bg-border/40 mx-2' />
             <CommandList className='max-h-[65vh] sm:max-h-[400px] overflow-y-auto overflow-x-hidden p-2 scrollbar-thin scrollbar-thumb-muted-foreground/20'>
               <CommandEmpty className='py-6 text-center text-xs text-muted-foreground'>
-                No results found.
+                No assets, transactions, or commands found.
               </CommandEmpty>
+
+              {/* 🎯 1. Platform Navigation */}
               <CommandGroup
-                heading='Suggestions'
+                heading='Platform Navigation'
                 className='px-2 text-muted-foreground text-[10px] font-medium tracking-wider uppercase'
               >
-                <CommandItem className='cursor-pointer rounded-xl py-2.5 px-3 text-xs text-foreground/90 data-[selected=true]:bg-sidebar-accent data-[selected=true]:text-sidebar-accent-foreground transition-all duration-150 mt-1'>
-                  Dashboard Overview
+                <CommandItem
+                  value='Dashboard Overview Platform Home'
+                  onSelect={() => handleNavigate("/dashboard")}
+                  className='cursor-pointer rounded-xl py-2.5 px-3 text-xs text-foreground/90 data-[selected=true]:bg-sidebar-accent data-[selected=true]:text-sidebar-accent-foreground transition-all duration-150 flex items-center justify-between group mt-1'
+                >
+                  <div className='flex items-center gap-2.5'>
+                    <LayoutDashboard className='size-4 text-muted-foreground group-data-[selected=true]:text-primary transition-colors' />
+                    <span className='font-medium'>Dashboard Overview</span>
+                  </div>
+                  <span className='text-[10px] text-muted-foreground/60 font-mono'>/dashboard</span>
                 </CommandItem>
-                <CommandItem className='cursor-pointer rounded-xl py-2.5 px-3 text-xs text-foreground/90 data-[selected=true]:bg-sidebar-accent data-[selected=true]:text-sidebar-accent-foreground transition-all duration-150 mt-1'>
-                  Crypto Assets Portfolio
+
+                <CommandItem
+                  value='Crypto Assets Portfolio Holdings'
+                  onSelect={() => handleNavigate("/dashboard/assets")}
+                  className='cursor-pointer rounded-xl py-2.5 px-3 text-xs text-foreground/90 data-[selected=true]:bg-sidebar-accent data-[selected=true]:text-sidebar-accent-foreground transition-all duration-150 flex items-center justify-between group mt-1'
+                >
+                  <div className='flex items-center gap-2.5'>
+                    <Wallet className='size-4 text-muted-foreground group-data-[selected=true]:text-primary transition-colors' />
+                    <span className='font-medium'>Crypto Assets Portfolio</span>
+                  </div>
+                  <span className='text-[10px] text-muted-foreground/60 font-mono'>/dashboard/assets</span>
                 </CommandItem>
-                <CommandItem className='cursor-pointer rounded-xl py-2.5 px-3 text-xs text-foreground/90 data-[selected=true]:bg-sidebar-accent data-[selected=true]:text-sidebar-accent-foreground transition-all duration-150 mt-1'>
-                  Transaction History
+
+                <CommandItem
+                  value='Transaction History Trade Orders Logs'
+                  onSelect={() => handleNavigate("/dashboard/transactions")}
+                  className='cursor-pointer rounded-xl py-2.5 px-3 text-xs text-foreground/90 data-[selected=true]:bg-sidebar-accent data-[selected=true]:text-sidebar-accent-foreground transition-all duration-150 flex items-center justify-between group mt-1'
+                >
+                  <div className='flex items-center gap-2.5'>
+                    <ArrowLeftRight className='size-4 text-muted-foreground group-data-[selected=true]:text-primary transition-colors' />
+                    <span className='font-medium'>Transaction History</span>
+                  </div>
+                  <span className='text-[10px] text-muted-foreground/60 font-mono'>/dashboard/transactions</span>
+                </CommandItem>
+
+                <CommandItem
+                  value='Advanced Analytics Performance Metrics Charts'
+                  onSelect={() => handleNavigate("/dashboard/analytics")}
+                  className='cursor-pointer rounded-xl py-2.5 px-3 text-xs text-foreground/90 data-[selected=true]:bg-sidebar-accent data-[selected=true]:text-sidebar-accent-foreground transition-all duration-150 flex items-center justify-between group mt-1'
+                >
+                  <div className='flex items-center gap-2.5'>
+                    <TrendingUp className='size-4 text-muted-foreground group-data-[selected=true]:text-primary transition-colors' />
+                    <span className='font-medium'>Advanced Analytics</span>
+                  </div>
+                  <span className='text-[10px] text-muted-foreground/60 font-mono'>/dashboard/analytics</span>
+                </CommandItem>
+
+                <CommandItem
+                  value='Security Account Settings Profile Password'
+                  onSelect={() => handleNavigate("/dashboard/settings")}
+                  className='cursor-pointer rounded-xl py-2.5 px-3 text-xs text-foreground/90 data-[selected=true]:bg-sidebar-accent data-[selected=true]:text-sidebar-accent-foreground transition-all duration-150 flex items-center justify-between group mt-1'
+                >
+                  <div className='flex items-center gap-2.5'>
+                    <Settings className='size-4 text-muted-foreground group-data-[selected=true]:text-primary transition-colors' />
+                    <span className='font-medium'>Security & Account Settings</span>
+                  </div>
+                  <span className='text-[10px] text-muted-foreground/60 font-mono'>/dashboard/settings</span>
+                </CommandItem>
+
+                <CommandItem
+                  value='Notifications Inbox Alerts Activity Log'
+                  onSelect={() => handleNavigate("/dashboard/notifications")}
+                  className='cursor-pointer rounded-xl py-2.5 px-3 text-xs text-foreground/90 data-[selected=true]:bg-sidebar-accent data-[selected=true]:text-sidebar-accent-foreground transition-all duration-150 flex items-center justify-between group mt-1'
+                >
+                  <div className='flex items-center gap-2.5'>
+                    <Bell className='size-4 text-muted-foreground group-data-[selected=true]:text-primary transition-colors' />
+                    <span className='font-medium'>Notifications Inbox</span>
+                  </div>
+                  <span className='text-[10px] text-muted-foreground/60 font-mono'>/dashboard/notifications</span>
                 </CommandItem>
               </CommandGroup>
-              <div className='my-2 h-px bg-border/40 mx-2' />
-              <CommandGroup
-                heading='Settings'
-                className='px-2 text-muted-foreground text-[10px] font-medium tracking-wider uppercase'
-              >
-                <CommandItem className='cursor-pointer rounded-xl py-2.5 px-3 text-xs text-foreground/90 data-[selected=true]:bg-sidebar-accent data-[selected=true]:text-sidebar-accent-foreground transition-all duration-150 mt-1'>
-                  Account Profile
-                </CommandItem>
-                <CommandItem className='cursor-pointer rounded-xl py-2.5 px-3 text-xs text-foreground/90 data-[selected=true]:bg-sidebar-accent data-[selected=true]:text-sidebar-accent-foreground transition-all duration-150 mt-1'>
-                  System Settings
-                </CommandItem>
-              </CommandGroup>
+
+              {/* 🎯 2. Dynamic Live Assets Search */}
+              {assets.length > 0 && (
+                <>
+                  <div className='my-2 h-px bg-border/40 mx-2' />
+                  <CommandGroup
+                    heading='Crypto Assets'
+                    className='px-2 text-muted-foreground text-[10px] font-medium tracking-wider uppercase'
+                  >
+                    {assets.map((asset) => (
+                      <CommandItem
+                        key={asset.id}
+                        value={`${asset.name} ${asset.symbol} ${asset.network}`}
+                        onSelect={() => handleNavigate("/dashboard/assets")}
+                        className='cursor-pointer rounded-xl py-2.5 px-3 text-xs text-foreground/90 data-[selected=true]:bg-sidebar-accent data-[selected=true]:text-sidebar-accent-foreground transition-all duration-150 flex items-center justify-between group mt-1'
+                      >
+                        <div className='flex items-center gap-2.5 min-w-0'>
+                          <Coins className='size-4 text-muted-foreground group-data-[selected=true]:text-primary shrink-0 transition-colors' />
+                          <div className='flex items-center gap-1.5 truncate'>
+                            <span className='font-bold text-foreground'>{asset.symbol}</span>
+                            <span className='text-muted-foreground text-[11px] truncate'>({asset.name})</span>
+                          </div>
+                        </div>
+                        <div className='flex items-center gap-2 shrink-0'>
+                          <span className='text-[10px] uppercase font-mono px-1.5 py-0.5 rounded bg-muted/60 text-muted-foreground border border-border/40'>
+                            {asset.network}
+                          </span>
+                          <span className='text-xs font-semibold font-mono'>
+                            ${asset.price?.toLocaleString(undefined, { minimumFractionDigits: 2 })}
+                          </span>
+                        </div>
+                      </CommandItem>
+                    ))}
+                  </CommandGroup>
+                </>
+              )}
+
+              {/* 🎯 3. Dynamic Recent Transactions Search */}
+              {transactions.length > 0 && (
+                <>
+                  <div className='my-2 h-px bg-border/40 mx-2' />
+                  <CommandGroup
+                    heading='Recent Transactions'
+                    className='px-2 text-muted-foreground text-[10px] font-medium tracking-wider uppercase'
+                  >
+                    {transactions.slice(0, 5).map((tx) => (
+                      <CommandItem
+                        key={tx.id}
+                        value={`${tx.assetSymbol} ${tx.type} ${tx.txHash} ${tx.network} ${tx.status}`}
+                        onSelect={() => handleNavigate("/dashboard/transactions")}
+                        className='cursor-pointer rounded-xl py-2.5 px-3 text-xs text-foreground/90 data-[selected=true]:bg-sidebar-accent data-[selected=true]:text-sidebar-accent-foreground transition-all duration-150 flex items-center justify-between group mt-1'
+                      >
+                        <div className='flex items-center gap-2.5 min-w-0'>
+                          <Receipt className='size-4 text-muted-foreground group-data-[selected=true]:text-primary shrink-0 transition-colors' />
+                          <div className='flex items-center gap-1.5 truncate'>
+                            <span className='font-bold uppercase text-[10px] px-1.5 py-0.5 rounded bg-muted/60 text-foreground border border-border/40'>
+                              {tx.type}
+                            </span>
+                            <span className='font-medium text-foreground truncate'>
+                              {tx.amount} {tx.assetSymbol}
+                            </span>
+                          </div>
+                        </div>
+                        <div className='flex items-center gap-2 shrink-0'>
+                          <span className='text-[10px] text-muted-foreground font-mono truncate max-w-[80px] hidden sm:inline'>
+                            {tx.txHash}
+                          </span>
+                          <span
+                            className={cn(
+                              "text-[10px] font-medium px-1.5 py-0.5 rounded border capitalize",
+                              tx.status === "Completed"
+                                ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/20"
+                                : tx.status === "Pending"
+                                ? "bg-amber-500/10 text-amber-400 border-amber-500/20"
+                                : "bg-rose-500/10 text-rose-400 border-rose-500/20"
+                            )}
+                          >
+                            {tx.status}
+                          </span>
+                        </div>
+                      </CommandItem>
+                    ))}
+                  </CommandGroup>
+                </>
+              )}
             </CommandList>
           </Command>
         )}
@@ -333,3 +487,4 @@ export default function Header() {
     </>
   );
 }
+

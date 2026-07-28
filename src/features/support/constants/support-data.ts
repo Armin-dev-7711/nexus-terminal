@@ -1,4 +1,4 @@
-import { FaqItem, SupportTicket, PopularArticle } from "../types";
+import { FaqItem, PopularArticle } from "../types";
 
 export const mockFaqs: FaqItem[] = [
   {
@@ -21,25 +21,6 @@ export const mockFaqs: FaqItem[] = [
     answer:
       "When rate boundaries are breached, our gateway returns a 429 Too Many Requests log. Your node will be throttled for exactly 60 seconds before full throughput execution resumes automatically.",
     category: "api_integration",
-  },
-];
-
-export const mockTickets: SupportTicket[] = [
-  {
-    id: "TCK-8921",
-    subject: "Stripe checkout session failed during crypto gas sync",
-    category: "billing",
-    status: "processing",
-    createdAt: "2026-07-08T14:22:00Z",
-    lastUpdate: "10 mins ago",
-  },
-  {
-    id: "TCK-4402",
-    subject: "Webhook signature verification throwing mismatch errors",
-    category: "api_integration",
-    status: "resolved",
-    createdAt: "2026-07-01T09:15:00Z",
-    lastUpdate: "3 days ago",
   },
 ];
 

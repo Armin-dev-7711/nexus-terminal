@@ -24,7 +24,7 @@ import {
   CardTitle,
   CardDescription,
 } from "@/components/ui/card";
-import { mockAllocationData } from "@/features/analytics/mocks/analytics.mock";
+import { useAllocation } from "@/features/analytics/hooks/useAllocation";
 
 // Create a custom tooltip for the donut chart
 const CustomAllocationTooltip = ({
@@ -56,6 +56,7 @@ const CustomAllocationTooltip = ({
 };
 
 export function AllocationChart() {
+  const { data } = useAllocation();
   return (
     <Card className='rounded-2xl border border-border/60 bg-card/30 backdrop-blur-sm flex flex-col h-[350px]'>
       <CardHeader className='pb-0'>
@@ -86,7 +87,7 @@ export function AllocationChart() {
               <Tooltip content={CustomAllocationTooltip} cursor={false} />
 
               <Pie
-                data={mockAllocationData}
+                data={data}
                 cx='50%'
                 cy='50%'
                 innerRadius={55}
@@ -96,7 +97,7 @@ export function AllocationChart() {
                 stroke='#09090b'
                 strokeWidth={4}
               >
-                {mockAllocationData.map((entry, index) => (
+                {data.map((entry, index) => (
                   <Cell key={`cell-${index}`} fill={entry.color} />
                 ))}
               </Pie>
@@ -104,7 +105,7 @@ export function AllocationChart() {
           </ResponsiveContainer>
 
           <div className='absolute z-0 inset-0 flex flex-col items-center justify-center pointer-events-none text-center'>
-            <span className='text-xl font-bold  text-foreground'>5</span>
+            <span className='text-xl font-bold  text-foreground'>{data.length}</span>
             <span className='text-[9px] text-muted-foreground uppercase tracking-widest'>
               Assets
             </span>
@@ -112,7 +113,7 @@ export function AllocationChart() {
         </div>
 
         <div className='w-full mt-6 space-y-3 px-2'>
-          {mockAllocationData.map((asset) => (
+          {data.map((asset) => (
             <div key={asset.name} className='flex items-center justify-between'>
               <div className='flex items-center gap-2.5'>
                 <div

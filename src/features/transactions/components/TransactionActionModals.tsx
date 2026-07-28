@@ -60,7 +60,7 @@ export function TransactionActionModals({
     onSubmit,
     handleImportSubmit,
     handleDeleteSubmit,
-  } = useTransactionModals(type, isOpen, onClose);
+  } = useTransactionModals(type, isOpen, onClose, transactionId);
 
   return (
     <Dialog

@@ -1,0 +1,187 @@
+// prisma/schema.prisma
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/app/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ۱. جدول کاربران (به‌روزرسانی شده برای Better Auth)
+model User {
+  id            String    @id @default(uuid())
+  name          String?
+  email         String    @unique
+  emailVerified Boolean   @default(false)
+  image         String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  
+  // روابط اختصاصی نکسوس
+  assets        Asset[]       
+  transactions  Transaction[] 
+  notifications Notification[]
+  tickets       SupportTicket[]
+  
+  // روابط Better Auth
+  sessions      Session[]
+  accounts      Account[]
+
+  // 🚀 فیلدهای جدید: تنظیمات کاربری (Preferences)
+  timezone      String    @default("America/Los_Angeles")
+  currency      String    @default("USD")
+  language      String    @default("English")
+  theme         String    @default("dark")
+
+  // 🚀 فیلدهای جدید: امنیت و نوتیفیکیشن
+  twoFactorEnabled Boolean @default(false)
+  securityAlerts   Boolean @default(true)
+  tradeExecutions  Boolean @default(true)
+  weeklyReports    Boolean @default(false)
+
+  // 🚀 فیلدهای جدید: تایید قوانین و خبرنامه
+  newsletter       Boolean   @default(false)
+  termsAcceptedAt  DateTime?
+
+  // 💳 فیلدهای جدید: پرداخت و اشتراک Stripe
+  stripeCustomerId       String?   @unique
+  stripeSubscriptionId   String?   @unique
+  stripePriceId          String?
+  stripeCurrentPeriodEnd DateTime?
+  subscriptionPlan       String    @default("explorer")
+
+  // 🚀 ارتباط با کلیدهای API
+  apiKeys       ApiKey[]
+
+  @@map("user")
+}
+
+model ApiKey {
+  id        String    @id @default(uuid())
+  name      String
+  keyPrefix String    // برای نمایش در فرانت (مثل: nx_live_8f9...)
+  keyHash   String    // هشِ کلید اصلی برای امنیت بالا (هیچوقت کلید واقعی خام ذخیره نمیشه)
+  userId    String
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  lastUsed  DateTime?
+  createdAt DateTime  @default(now())
+
+  @@map("api_key")
+}
+
+// ۲. جدول سشن‌ها (Better Auth)
+model Session {
+  id        String   @id @default(uuid())
+  expiresAt DateTime
+  token     String   @unique
+  ipAddress String?
+  userAgent String?
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("session")
+}
+
+// ۳. جدول اکانت‌ها برای اتصال به گوگل، گیت‌هاب یا پسورد (Better Auth)
+model Account {
+  id                    String    @id @default(uuid())
+  accountId             String
+  providerId            String
+  userId                String
+  user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  accessToken           String?
+  refreshToken          String?
+  idToken               String?
+  accessTokenExpiresAt  DateTime?
+  refreshTokenExpiresAt DateTime?
+  scope                 String?
+  password              String?
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
+
+  @@map("account")
+}
+
+// ۴. جدول توکن‌های تایید ایمیل و پسورد (Better Auth)
+model Verification {
+  id         String   @id @default(uuid())
+  identifier String
+  value      String
+  expiresAt  DateTime
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@map("verification")
+}
+
+// ۵. جدول دارایی‌های دیجیتال نکسوس (userId تبدیل به String شد)
+model Asset {
+  id           String   @id @default(uuid())
+  coinId       String?   
+  name         String   
+  symbol       String   
+  network      String
+  amount       Float    
+  averagePrice Float    
+  userId       String   // متصل به آی‌دی جدید کاربر
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@map("asset")
+}
+
+// ۶. جدول تراکنش‌های اخیر نکسوس (userId تبدیل به String شد)
+model Transaction {
+  id                 String   @id @default(uuid())
+  txHash             String
+  type               String   
+  assetSymbol        String
+  assetName          String
+  network            String
+  amount             Float    
+  valueUsd           Float
+  status             String   
+  feeUsd             Float?
+  destinationAddress String?
+  note               String?
+  userId             String
+  user               User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt          DateTime @default(now())
+
+  @@map("transaction")
+}
+
+// ۷. جدول نوتیفیکیشن‌ها (سیستم هشدار زنده)
+model Notification {
+  id          String   @id @default(cuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  title       String
+  description String
+  category    String   // "trade" | "security" | "system"
+  status      String   @default("unread") // "read" | "unread"
+  link        String?
+  createdAt   DateTime @default(now())
+
+  @@map("notification")
+}
+
+// ۸. جدول تیکت‌های پشتیبانی
+model SupportTicket {
+  id        String   @id @default(cuid())
+  ticketId  String   @unique
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  subject   String
+  category  String   // "node_execution" | "billing" | "api_integration" | "security"
+  status    String   @default("open") // "open" | "processing" | "resolved"
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("support_ticket")
+}

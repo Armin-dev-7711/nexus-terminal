@@ -11,15 +11,20 @@ import {
   TransactionFormValues,
 } from "../schemas/transaction.schema";
 import { TransactionActionType } from "../components/TransactionActionModals";
+import { useAddTransaction, useDeleteTransaction } from "./useTransactions";
 
 export function useTransactionModals(
   type: TransactionActionType,
   isOpen: boolean,
   onClose: () => void,
+  transactionId?: string
 ) {
-  const [isPending, startTransition] = useTransition();
   const isDelete = type === "delete";
   const isImport = type === "import";
+
+  const addMutation = useAddTransaction();
+  const deleteMutation = useDeleteTransaction();
+  const isPending = addMutation.isPending || deleteMutation.isPending;
 
   // Safe form formatting with Zod
   const form = useForm<TransactionFormValues>({
@@ -40,36 +45,32 @@ export function useTransactionModals(
 
   const onSubmit: SubmitHandler<TransactionFormValues> = useCallback(
     (data) => {
-      startTransition(async () => {
-        await new Promise((resolve) => setTimeout(resolve, 1500));
-        toast.success("Ledger Updated", {
-          description: `Successfully processed ${data.type} of ${data.amount} ${data.assetSymbol}.`,
-        });
-        onClose();
+      addMutation.mutate(data, {
+        onSuccess: () => {
+          onClose();
+          form.reset();
+        }
       });
     },
-    [onClose],
+    [addMutation, onClose, form],
   );
 
   const handleImportSubmit = useCallback(() => {
-    startTransition(async () => {
-      await new Promise((resolve) => setTimeout(resolve, 2000));
-      toast.success("CSV Imported", {
-        description: "142 new transactions added to your ledger.",
-      });
-      onClose();
+    // Import not strictly requested yet, just a mock closing logic
+    toast.success("CSV Imported", {
+      description: "Demo mode: CSV import successful.",
     });
+    onClose();
   }, [onClose]);
 
   const handleDeleteSubmit = useCallback(() => {
-    startTransition(async () => {
-      await new Promise((r) => setTimeout(r, 1000));
-      toast.error("Record Deleted", {
-        description: "The transaction has been permanently removed.",
-      });
-      onClose();
+    if (!transactionId) return;
+    deleteMutation.mutate(transactionId, {
+      onSuccess: () => {
+        onClose();
+      }
     });
-  }, [onClose]);
+  }, [deleteMutation, transactionId, onClose]);
 
   return {
     form,

@@ -14,18 +14,19 @@ import {
   useSidebar,
 } from "../ui/sidebar";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import {
   Bell,
   ChevronsUpDown,
   CreditCard,
   Hexagon,
   LifeBuoy,
-  LogOut,
   Settings,
   ShieldCheck,
   Sparkles,
   User,
+  LogOut,
+  Loader2,
 } from "lucide-react";
 import { SidebarMainMenuItems, SidebarManagementMenuItems } from "@/constants";
 import { cn } from "@/lib/utils";
@@ -39,12 +40,37 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "../ui/dropdown-menu";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { useSession, signOut } from "@/lib/auth-client"; // 🚀 اتصال به دیتابیس برای دریافت اطلاعات زنده
+import { toast } from "sonner";
 
 export default function AppSidebar() {
   const { state } = useSidebar();
   const pathname = usePathname();
+  const router = useRouter();
   const isCollapsed = state === "collapsed";
+
+  // 🚀 دریافت اطلاعات کاربر از سشنِ زنده
+  const { data: session, isPending: sessionLoading } = useSession();
+
+  // استخراج اطلاعات کاربر (با مقادیر پیش‌فرض تا زمان لود شدن)
+  const user = session?.user;
+  const userName = user?.name || "Nexus Operator";
+  const userEmail = user?.email || "connecting...";
+  const userInitial = userName.substring(0, 2).toUpperCase();
+
+  // 🚀 تابع خروج واقعی و پاک کردن کوکی‌ها در دیتابیس Neon
+  const handleLogout = async () => {
+    toast.loading("Terminating session connection...", { id: "logout" });
+    await signOut({
+      fetchOptions: {
+        onSuccess: () => {
+          toast.success("Connection Terminated", { id: "logout" });
+          router.push("/auth/login");
+        },
+      },
+    });
+  };
 
   return (
     <Sidebar collapsible='icon'>
@@ -181,19 +207,42 @@ export default function AppSidebar() {
                 >
                   <div className='flex items-center gap-3 w-full text-left'>
                     {/* 🚀 Fixed: Remove component with empty src to prevent fake network data */}
-                    <Avatar className='size-8 rounded-lg'>
+                    {/* <Avatar className='size-8 rounded-lg'>
                       <AvatarFallback className='rounded-lg bg-sidebar-primary text-sidebar-primary-foreground font-bold text-xs'>
                         NX
                       </AvatarFallback>
+                    </Avatar> */}
+                    <Avatar className='size-8 rounded-lg'>
+                      {user?.image && (
+                        <AvatarImage src={user.image} alt={userName} />
+                      )}
+                      <AvatarFallback className='rounded-lg bg-primary/10 text-primary font-bold text-xs'>
+                        {sessionLoading ? (
+                          <Loader2 className='size-3 animate-spin' />
+                        ) : (
+                          userInitial
+                        )}
+                      </AvatarFallback>
                     </Avatar>
 
-                    {!isCollapsed && (
+                    {/* {!isCollapsed && (
                       <div className='flex flex-col flex-1 text-left truncate'>
                         <span className='text-xs font-semibold text-foreground truncate'>
                           Arshad Dev
                         </span>
                         <span className='text-[10px] text-muted-foreground truncate'>
                           candidate@nexus.cap
+                        </span>
+                      </div>
+                    )} */}
+
+                    {!isCollapsed && (
+                      <div className='flex flex-col flex-1 text-left truncate'>
+                        <span className='text-xs font-semibold text-foreground truncate'>
+                          {sessionLoading ? "Syncing..." : userName}
+                        </span>
+                        <span className='text-[10px] text-muted-foreground truncate'>
+                          {userEmail}
                         </span>
                       </div>
                     )}
@@ -211,7 +260,7 @@ export default function AppSidebar() {
                 align='end'
                 sideOffset={4}
               >
-                <DropdownMenuLabel className='p-0 font-normal'>
+                {/* <DropdownMenuLabel className='p-0 font-normal'>
                   <div className='flex items-center gap-2 px-1 py-1.5 text-left text-sm'>
                     <Avatar className='size-8 rounded-lg'>
                       <AvatarFallback className='rounded-lg bg-sidebar-primary text-sidebar-primary-foreground font-bold text-xs'>
@@ -224,6 +273,28 @@ export default function AppSidebar() {
                       </span>
                       <span className='truncate text-[10px] text-muted-foreground'>
                         candidate@nexus.cap
+                      </span>
+                    </div>
+                  </div>
+                </DropdownMenuLabel> */}
+
+                <DropdownMenuLabel className='p-0 font-normal'>
+                  <div className='flex items-center gap-2 px-1 py-1.5 text-left text-sm'>
+                    {/* 🚀 نمایش عکس واقعی در داخل دراپ داون */}
+                    <Avatar className='size-8 rounded-lg'>
+                      {user?.image && (
+                        <AvatarImage src={user.image} alt={userName} />
+                      )}
+                      <AvatarFallback className='rounded-lg bg-primary/10 text-primary font-bold text-xs'>
+                        {userInitial}
+                      </AvatarFallback>
+                    </Avatar>
+                    <div className='grid flex-1 text-left text-sm leading-tight'>
+                      <span className='truncate font-semibold text-foreground text-xs'>
+                        {userName}
+                      </span>
+                      <span className='truncate text-[10px] text-muted-foreground'>
+                        {userEmail}
                       </span>
                     </div>
                   </div>
@@ -310,14 +381,21 @@ export default function AppSidebar() {
 
                 <DropdownMenuSeparator />
 
-                <DropdownMenuItem
+                {/* <DropdownMenuItem
                   asChild
                   className='cursor-pointer gap-2 text-xs py-2 text-destructive hover:text-destructive focus:bg-destructive/10 focus:text-destructive'
                 >
-                  <Link href='/login'>
+                  <Link href='/auth/login'>
                     <LogOut className='size-4' />
                     <span>Log out</span>
                   </Link>
+                </DropdownMenuItem> */}
+                <DropdownMenuItem
+                  onClick={handleLogout}
+                  className='cursor-pointer gap-2 text-xs py-2 text-destructive hover:text-destructive focus:bg-destructive/10 focus:text-destructive'
+                >
+                  <LogOut className='size-4' />
+                  <span>Terminate Session</span>
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>

@@ -3,7 +3,7 @@
 
 import * as React from "react";
 import { motion, AnimatePresence } from "motion/react";
-import { Check, X, ArrowRight } from "lucide-react";
+import { Check, X, ArrowRight, Loader2 } from "lucide-react";
 import {
   OperationalPlan,
   BillingPeriod,
@@ -186,21 +186,26 @@ export function PricingCard({
         <button
           onClick={onAction}
           disabled={isActive || isLoading}
-          className={`w-full h-11 rounded-xl flex items-center justify-center gap-2 text-xs font-medium transition-all duration-300 border shadow-md transform ${
+          className={`w-full h-11 rounded-xl flex items-center justify-center gap-2 text-xs font-medium transition-all duration-300 border shadow-md transform cursor-pointer ${
             isActive
               ? "bg-muted/30 text-muted-foreground border-border/40 cursor-not-allowed"
               : isLoading
-                ? "bg-primary/20 text-primary border-primary/50 cursor-wait"
+                ? "bg-primary/20 text-primary border-primary/50 cursor-wait animate-pulse"
                 : plan.isHero
-                  ? "bg-primary text-black border-primary hover:bg-primary/90"
-                  : "bg-white/5 text-foreground border-white/10 hover:bg-white/10"
+                  ? "bg-primary text-black border-primary hover:bg-primary/90 active:scale-98"
+                  : "bg-white/5 text-foreground border-white/10 hover:bg-white/10 active:scale-98"
           }`}
         >
-          {isLoading
-            ? "Redirecting..."
-            : isActive
-              ? "Active Plan"
-              : plan.actionText}
+          {isLoading ? (
+            <>
+              <Loader2 className='size-4 animate-spin text-primary' />
+              <span>Connecting to Stripe...</span>
+            </>
+          ) : isActive ? (
+            "Active Plan"
+          ) : (
+            plan.actionText
+          )}
           {!isActive && !isLoading && (
             <ArrowRight className='size-3.5 transition-transform duration-300 group-hover:translate-x-1.5' />
           )}

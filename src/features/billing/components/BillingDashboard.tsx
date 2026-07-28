@@ -18,6 +18,7 @@ import { Badge } from "@/components/ui/badge";
 
 import { USAGE_STATS, INVOICE_HISTORY } from "../mocks/billing.mock";
 import { PricingSection } from "./PricingSection";
+import { useSession } from "@/lib/auth-client";
 
 const InvoiceTable = dynamic(
   () => import("./InvoiceTable").then((mod) => mod.InvoiceTable),
@@ -32,6 +33,12 @@ const InvoiceTable = dynamic(
 );
 
 export function BillingDashboard() {
+  const { data: session } = useSession();
+  const rawPlan =
+    (session?.user as { subscriptionPlan?: string })?.subscriptionPlan ||
+    "explorer";
+  const planTitle = rawPlan.charAt(0).toUpperCase() + rawPlan.slice(1) + " Plan";
+
   return (
     <div className='flex-1 space-y-10 p-6 pt-8 md:p-8 max-w-5xl mx-auto w-full animate-in fade-in duration-700 transform-gpu'>
       {/* 1. HEADER */}
@@ -61,13 +68,14 @@ export function BillingDashboard() {
               </CardDescription>
             </div>
             <CardTitle className='text-3xl font-black text-foreground tracking-tight'>
-              Starter Tier
+              {planTitle}
             </CardTitle>
           </CardHeader>
           <CardContent className='pb-6 relative z-10'>
             <p className='text-sm text-zinc-400 leading-relaxed'>
-              Running on free sandbox infrastructure. Upgrade to unlock full
-              websocket potential.
+              {rawPlan === "explorer"
+                ? "Running on standard terminal infrastructure. Upgrade to unlock full websocket potential."
+                : "High-frequency operational node active with priority API access."}
             </p>
           </CardContent>
           <CardFooter className='bg-background/40 border-t border-border/30 px-6 py-4 flex items-center justify-between text-xs text-zinc-400  backdrop-blur-md'>

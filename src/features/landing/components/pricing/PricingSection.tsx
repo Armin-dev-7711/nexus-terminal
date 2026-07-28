@@ -18,6 +18,7 @@ import {
 import dynamic from "next/dynamic";
 import { CurrencyType } from "../../types/pricing.types";
 import { usePricingState } from "../../hooks/usePricingState";
+import { useSubscriptionCheckout } from "@/features/billing/hooks/useSubscriptionCheckout";
 import { PricingCard } from "./PricingCard";
 
 const DynamicPricingCard = dynamic(
@@ -41,6 +42,9 @@ export function PricingSection() {
     changeCurrency,
     calculatePrice,
   } = usePricingState();
+
+  const { userPlan, loadingPlanId, handleSubscribe, isAuthenticated } =
+    useSubscriptionCheckout();
   const [isDropdownOpen, setIsDropdownOpen] = React.useState(false);
 
   // 🚀 Spotlight Stage: Physically track mouse coordinates on the background
@@ -202,6 +206,9 @@ export function PricingSection() {
                 currency={currency}
                 calculatePrice={calculatePrice}
                 isSectionInView={isInView}
+                isActive={isAuthenticated && userPlan === plan.id}
+                isLoading={loadingPlanId === plan.id}
+                onAction={() => handleSubscribe(plan.id, billingPeriod)}
               />
             ))}
           </motion.div>

@@ -10,7 +10,7 @@ import { columns } from "./columns";
 import { AssetsTable } from "./AssetsTable";
 import { AssetsTableSkeleton } from "./AssetsTableSkeleton";
 import { Asset } from "../types";
-import { mockAssetsData } from "../mocks/assets.mock";
+import { useAssetsData } from "../hooks/useAssets";
 
 const AssetActionModals = dynamic(
   () => import("./AssetActionModals").then((mod) => mod.AssetActionModals),
@@ -29,25 +29,7 @@ export function AssetsClientRoot() {
     assetId?: string;
   }>({ type: null });
 
-  const [isLoading, setIsLoading] = React.useState(true);
-  const [assets, setAssets] = React.useState<Asset[]>([]);
-
-  React.useEffect(() => {
-    let mounted = true;
-    const fetchAssets = async () => {
-      setIsLoading(true);
-
-      await new Promise((resolve) => setTimeout(resolve, 1500));
-      if (mounted) {
-        setAssets(mockAssetsData);
-        setIsLoading(false);
-      }
-    };
-    fetchAssets();
-    return () => {
-      mounted = false;
-    };
-  }, []);
+  const { data: assets = [], isLoading } = useAssetsData();
 
   return (
     <div className='flex-1 space-y-6 p-6 pt-8 md:p-8 bg-background antialiased'>

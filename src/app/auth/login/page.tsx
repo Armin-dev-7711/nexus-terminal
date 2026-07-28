@@ -1,6 +1,8 @@
 // src/app/auth/login/page.tsx
 import { Metadata } from "next";
 import { LoginForm } from "@/features/auth/components/LoginForm";
+import { Suspense } from "react";
+import DashboardLoading from "@/app/loading";
 
 export const metadata: Metadata = {
   title: "Secure Login | NEXUS Terminal",
@@ -9,5 +11,9 @@ export const metadata: Metadata = {
 };
 
 export default function LoginPage() {
-  return <LoginForm />;
+  return (
+    <Suspense fallback={<DashboardLoading />}>
+      <LoginForm />;
+    </Suspense>
+  );
 }

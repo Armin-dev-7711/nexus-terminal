@@ -32,6 +32,7 @@ import {
 
 import { mockSessions } from "../../mocks/settings.mock";
 import { useSecuritySettings } from "../../hooks/useSecuritySettings";
+import { useSettingsData } from "../../hooks/useSettingsData";
 
 export function SecurityTab() {
   const {
@@ -42,134 +43,152 @@ export function SecurityTab() {
     handleRevokeSession,
     toggleTwoFactor,
   } = useSecuritySettings();
+  const { isOAuthOnly, isLoading } = useSettingsData();
+
+  if (isLoading) return <div>Loading security matrices...</div>;
 
   return (
     <div className='space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500 transform-gpu'>
       {/* 1. Change Password Section */}
-      <Card className='rounded-2xl border border-border/60 bg-card/30 backdrop-blur-sm'>
-        <CardHeader className='space-y-2'>
-          <CardTitle className='text-lg font-bold text-foreground flex items-center gap-2'>
-            <Key className='size-5 text-primary' /> Password Management
-          </CardTitle>
-          <CardDescription className='text-xs text-zinc-400'>
-            Update your password to keep your account secure.
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <form id='password-form' onSubmit={onSubmit}>
-            <FieldGroup className='space-y-4 max-w-md'>
-              {/* Input current password */}
-              <Controller
-                name='currentPassword'
-                control={form.control}
-                render={({ field, fieldState }) => (
-                  <Field data-invalid={fieldState.invalid}>
-                    <FieldLabel
-                      htmlFor='currentPassword'
-                      className='text-[11px] font-medium text-zinc-400 uppercase'
-                    >
-                      Current Password
-                    </FieldLabel>
-                    <Input
-                      {...field}
-                      id='currentPassword'
-                      aria-label='Current Password'
-                      type='password'
-                      disabled={isPending}
-                      className='h-10 rounded-xl border-border bg-muted/10 text-sm focus-visible:ring-1 focus-visible:ring-primary placeholder:text-zinc-500'
-                      placeholder='••••••••'
-                    />
-                    {fieldState.invalid && (
-                      <FieldError
-                        errors={[fieldState.error]}
-                        className='text-[10px]'
+      {!isOAuthOnly ? (
+        <Card className='rounded-2xl border border-border/60 bg-card/30 backdrop-blur-sm'>
+          <CardHeader className='space-y-2'>
+            <CardTitle className='text-lg font-bold text-foreground flex items-center gap-2'>
+              <Key className='size-5 text-primary' /> Password Management
+            </CardTitle>
+            <CardDescription className='text-xs text-zinc-400'>
+              Update your password to keep your account secure.
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <form id='password-form' onSubmit={onSubmit}>
+              <FieldGroup className='space-y-4 max-w-md'>
+                {/* Input current password */}
+                <Controller
+                  name='currentPassword'
+                  control={form.control}
+                  render={({ field, fieldState }) => (
+                    <Field data-invalid={fieldState.invalid}>
+                      <FieldLabel
+                        htmlFor='currentPassword'
+                        className='text-[11px] font-medium text-zinc-400 uppercase'
+                      >
+                        Current Password
+                      </FieldLabel>
+                      <Input
+                        {...field}
+                        id='currentPassword'
+                        aria-label='Current Password'
+                        type='password'
+                        disabled={isPending}
+                        className='h-10 rounded-xl border-border bg-muted/10 text-sm focus-visible:ring-1 focus-visible:ring-primary placeholder:text-zinc-500'
+                        placeholder='••••••••'
                       />
-                    )}
-                  </Field>
-                )}
-              />
+                      {fieldState.invalid && (
+                        <FieldError
+                          errors={[fieldState.error]}
+                          className='text-[10px]'
+                        />
+                      )}
+                    </Field>
+                  )}
+                />
 
-              {/* Input new password */}
-              <Controller
-                name='newPassword'
-                control={form.control}
-                render={({ field, fieldState }) => (
-                  <Field data-invalid={fieldState.invalid}>
-                    <FieldLabel
-                      htmlFor='newPassword'
-                      className='text-[11px] font-medium text-zinc-400 uppercase'
-                    >
-                      New Password
-                    </FieldLabel>
-                    <Input
-                      {...field}
-                      id='newPassword'
-                      aria-label='New Password'
-                      type='password'
-                      disabled={isPending}
-                      className='h-10 rounded-xl border-border bg-muted/10 text-sm focus-visible:ring-1 focus-visible:ring-primary placeholder:text-zinc-500'
-                      placeholder='••••••••'
-                    />
-                    {fieldState.invalid && (
-                      <FieldError
-                        errors={[fieldState.error]}
-                        className='text-[10px]'
+                {/* Input new password */}
+                <Controller
+                  name='newPassword'
+                  control={form.control}
+                  render={({ field, fieldState }) => (
+                    <Field data-invalid={fieldState.invalid}>
+                      <FieldLabel
+                        htmlFor='newPassword'
+                        className='text-[11px] font-medium text-zinc-400 uppercase'
+                      >
+                        New Password
+                      </FieldLabel>
+                      <Input
+                        {...field}
+                        id='newPassword'
+                        aria-label='New Password'
+                        type='password'
+                        disabled={isPending}
+                        className='h-10 rounded-xl border-border bg-muted/10 text-sm focus-visible:ring-1 focus-visible:ring-primary placeholder:text-zinc-500'
+                        placeholder='••••••••'
                       />
-                    )}
-                  </Field>
-                )}
-              />
+                      {fieldState.invalid && (
+                        <FieldError
+                          errors={[fieldState.error]}
+                          className='text-[10px]'
+                        />
+                      )}
+                    </Field>
+                  )}
+                />
 
-              {/* Repeat new password */}
-              <Controller
-                name='confirmPassword'
-                control={form.control}
-                render={({ field, fieldState }) => (
-                  <Field data-invalid={fieldState.invalid}>
-                    <FieldLabel
-                      htmlFor='confirmPassword'
-                      className='text-[11px] font-medium text-zinc-400 uppercase'
-                    >
-                      Confirm New Password
-                    </FieldLabel>
-                    <Input
-                      {...field}
-                      id='confirmPassword'
-                      aria-label='Confirm New Password'
-                      type='password'
-                      disabled={isPending}
-                      className='h-10 rounded-xl border-border bg-muted/10 text-sm focus-visible:ring-1 focus-visible:ring-primary placeholder:text-zinc-500'
-                      placeholder='••••••••'
-                    />
-                    {fieldState.invalid && (
-                      <FieldError
-                        errors={[fieldState.error]}
-                        className='text-[10px]'
+                {/* Repeat new password */}
+                <Controller
+                  name='confirmPassword'
+                  control={form.control}
+                  render={({ field, fieldState }) => (
+                    <Field data-invalid={fieldState.invalid}>
+                      <FieldLabel
+                        htmlFor='confirmPassword'
+                        className='text-[11px] font-medium text-zinc-400 uppercase'
+                      >
+                        Confirm New Password
+                      </FieldLabel>
+                      <Input
+                        {...field}
+                        id='confirmPassword'
+                        aria-label='Confirm New Password'
+                        type='password'
+                        disabled={isPending}
+                        className='h-10 rounded-xl border-border bg-muted/10 text-sm focus-visible:ring-1 focus-visible:ring-primary placeholder:text-zinc-500'
+                        placeholder='••••••••'
                       />
-                    )}
-                  </Field>
-                )}
-              />
-            </FieldGroup>
-          </form>
-        </CardContent>
-        <CardFooter className='px-6 py-4 bg-muted/5 border-t border-border/40 flex justify-end'>
-          <Button
-            type='submit'
-            form='password-form'
-            disabled={isPending}
-            className='bg-primary text-primary-foreground hover:bg-primary/90 rounded-xl px-6 shadow-md shadow-primary/10'
-          >
-            {isPending ? (
-              <>
-                <Loader2 className='mr-2 size-4 animate-spin' /> Updating
-              </>
-            ) : (
-              "Update Password"
-            )}
-          </Button>
-        </CardFooter>
-      </Card>
+                      {fieldState.invalid && (
+                        <FieldError
+                          errors={[fieldState.error]}
+                          className='text-[10px]'
+                        />
+                      )}
+                    </Field>
+                  )}
+                />
+              </FieldGroup>
+            </form>
+          </CardContent>
+          <CardFooter className='px-6 py-4 bg-muted/5 border-t border-border/40 flex justify-end'>
+            <Button
+              type='submit'
+              form='password-form'
+              disabled={isPending}
+              className='bg-primary text-primary-foreground hover:bg-primary/90 rounded-xl px-6 shadow-md shadow-primary/10'
+            >
+              {isPending ? (
+                <>
+                  <Loader2 className='mr-2 size-4 animate-spin' /> Updating
+                </>
+              ) : (
+                "Update Password"
+              )}
+            </Button>
+          </CardFooter>
+        </Card>
+      ) : (
+        <Card className='rounded-2xl border border-blue-500/20 bg-blue-500/5 backdrop-blur-sm'>
+          <CardContent className='p-6'>
+            <h3 className='text-sm font-bold text-blue-400'>
+              Managed via OAuth Provider
+            </h3>
+            <p className='text-xs text-zinc-400 mt-1'>
+              Your security credentials are managed securely by your connected
+              social provider (Google/GitHub). Password changes are disabled for
+              this node.
+            </p>
+          </CardContent>
+        </Card>
+      )}
 
       {/* 2. 2FA Layer */}
       <Card className='rounded-2xl border border-border/60 bg-card/30 backdrop-blur-sm'>

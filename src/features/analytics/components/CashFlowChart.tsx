@@ -24,7 +24,7 @@ import {
   CardTitle,
   CardDescription,
 } from "@/components/ui/card";
-import { mockCashFlowData } from "@/features/analytics/mocks/analytics.mock";
+import { useCashFlow } from "@/features/analytics/hooks/useCashFlow";
 
 // Create a custom tooltip for precise coloring
 const CustomCashFlowTooltip = ({
@@ -62,6 +62,7 @@ const CustomCashFlowTooltip = ({
 };
 
 export function CashFlowChart() {
+  const { data } = useCashFlow();
   return (
     <Card className='rounded-2xl border border-border/60 bg-card/30 backdrop-blur-sm flex flex-col h-[350px]'>
       <CardHeader className='pb-4'>
@@ -82,7 +83,7 @@ export function CashFlowChart() {
       <CardContent className='flex-1 pl-0 pr-4 pb-2'>
         <ResponsiveContainer width='100%' height='100%'>
           <BarChart
-            data={mockCashFlowData}
+            data={data}
             margin={{ top: 10, right: 10, left: -20, bottom: 0 }}
           >
             <CartesianGrid

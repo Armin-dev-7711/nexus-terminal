@@ -14,6 +14,7 @@ export interface FaqItem {
 
 export interface SupportTicket {
   id: string;
+  ticketId: string;
   subject: string;
   category: SupportCategory;
   status: TicketStatus;

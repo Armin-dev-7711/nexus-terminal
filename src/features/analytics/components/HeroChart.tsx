@@ -19,7 +19,7 @@ import {
   CardTitle,
   CardDescription,
 } from "@/components/ui/card";
-import { mockHeroChartData } from "@/features/analytics/mocks/analytics.mock";
+import { useHeroChart } from "@/features/analytics/hooks/useHeroChart";
 
 import {
   NameType,
@@ -61,6 +61,7 @@ const CustomHeroTooltip = ({
 };
 
 export function HeroChart() {
+  const { data } = useHeroChart();
   return (
     <Card className='rounded-2xl border border-border/60 bg-card/30 backdrop-blur-sm flex flex-col h-[400px]'>
       <CardHeader className='pb-2'>
@@ -76,7 +77,7 @@ export function HeroChart() {
       <CardContent className='flex-1 w-full pt-4 pr-4 pl-0'>
         <ResponsiveContainer width='100%' height='100%'>
           <AreaChart
-            data={mockHeroChartData}
+            data={data}
             margin={{ top: 10, right: 10, left: 0, bottom: 0 }}
           >
             <defs>

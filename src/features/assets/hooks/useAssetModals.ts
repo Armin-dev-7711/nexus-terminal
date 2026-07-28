@@ -1,20 +1,29 @@
 // src/features/assets/hooks/useAssetModals.ts
 "use client";
 
-import { useTransition, useEffect, useCallback } from "react";
+import { useEffect, useCallback, useMemo } from "react";
 import { useForm, Resolver, SubmitHandler } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { toast } from "sonner";
 
 import { assetFormSchema, AssetFormValues } from "../schemas/asset.schema";
+import { useAddAsset, useUpdateAsset, useDeleteAsset, useAssetsData } from "./useAssets";
 
 export function useAssetModals(
   type: "add" | "edit" | "delete" | null,
   isOpen: boolean,
   onClose: () => void,
+  assetId?: string
 ) {
   const isDelete = type === "delete";
-  const [isPending, startTransition] = useTransition();
+
+  const { data: assets } = useAssetsData();
+  const assetToEdit = useMemo(() => assets?.find((a) => a.id === assetId), [assets, assetId]);
+
+  const { mutateAsync: addAsset, isPending: isAdding } = useAddAsset();
+  const { mutateAsync: updateAsset, isPending: isUpdating } = useUpdateAsset();
+  const { mutateAsync: deleteAsset, isPending: isDeleting } = useDeleteAsset();
+
+  const isPending = isAdding || isUpdating || isDeleting;
 
   const form = useForm<AssetFormValues>({
     resolver: zodResolver(assetFormSchema) as Resolver<AssetFormValues>,
@@ -27,42 +36,49 @@ export function useAssetModals(
   });
 
   useEffect(() => {
-    if (!isOpen) {
-      form.reset();
+    if (isOpen && type === "edit" && assetToEdit) {
+      form.reset({
+        network: assetToEdit.network,
+        symbol: assetToEdit.symbol,
+        amount: assetToEdit.holdingsAmount,
+        purchasePrice: assetToEdit.price, // We map price to purchasePrice in mock
+      });
+    } else if (!isOpen) {
+      form.reset({
+        network: undefined,
+        symbol: "",
+        amount: "" as unknown as number,
+        purchasePrice: "" as unknown as number,
+      });
     }
-  }, [isOpen, form]);
+  }, [isOpen, type, assetToEdit, form]);
 
   const onSubmit: SubmitHandler<AssetFormValues> = useCallback(
-    (data) => {
-      startTransition(async () => {
-        await new Promise((resolve) => setTimeout(resolve, 1500));
-
-        const isAdd = type === "add";
-        const actionVerb = isAdd ? "added to" : "updated in";
-
-        toast.success("Asset Ledger Updated", {
-          description: `Successfully ${actionVerb} your portfolio.`,
-          action: {
-            label: `${data.symbol} on ${data.network}`,
-            onClick: () => console.log("User clicked action"),
-          },
-        });
-
+    async (data) => {
+      try {
+        if (type === "add") {
+          await addAsset(data);
+        } else if (type === "edit" && assetId) {
+          await updateAsset({ id: assetId, data });
+        }
         onClose();
-      });
+      } catch (error) {
+        console.error("Mutation failed", error);
+      }
     },
-    [type, onClose],
+    [type, assetId, addAsset, updateAsset, onClose],
   );
 
-  const handleDelete = useCallback(() => {
-    startTransition(async () => {
-      await new Promise((r) => setTimeout(r, 1000));
-      toast.error("Asset Removed", {
-        description: "The asset and its history have been permanently deleted.",
-      });
-      onClose();
-    });
-  }, [onClose]);
+  const handleDelete = useCallback(async () => {
+    if (assetId) {
+      try {
+        await deleteAsset(assetId);
+        onClose();
+      } catch (error) {
+        console.error("Deletion failed", error);
+      }
+    }
+  }, [assetId, deleteAsset, onClose]);
 
   return {
     form,

@@ -2,7 +2,6 @@ import AppSidebar from "@/components/shared/AppSidebar";
 import Header from "@/components/shared/Header";
 
 import { SidebarProvider, SidebarInset } from "@/components/ui/sidebar";
-import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { NotificationProvider } from "@/features/notifications/context/NotificationContext";
 
@@ -27,18 +26,6 @@ export default function RootLayout({
             </main>
           </SidebarInset>
         </SidebarProvider>
-        {/* Add Toaster with Premium Settings richColors: Enables semantic colors 
-        (green for success, red for error)   
-      */}
-        <Toaster
-          richColors
-          position='bottom-right'
-          toastOptions={{
-            style: { fontFamily: "var(--font-geist-sans)" },
-            className:
-              "border-border/60 bg-popover/95 backdrop-blur-md text-sm",
-          }}
-        />
       </NotificationProvider>
     </TooltipProvider>
   );

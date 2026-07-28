@@ -12,7 +12,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { mockFaqs, mockTickets, mockArticles } from "../mocks/support.mock";
+import { mockFaqs, mockArticles } from "../constants/support-data";
 import { FaqSection } from "./FaqSection";
 import { TicketSection } from "./TicketSection";
 
@@ -120,7 +120,7 @@ export function SupportDashboard() {
       <FaqSection faqs={mockFaqs} searchQuery={searchQuery} />
 
       {/* 4. TICKETS */}
-      <TicketSection initialTickets={mockTickets} />
+      <TicketSection />
     </div>
   );
 }

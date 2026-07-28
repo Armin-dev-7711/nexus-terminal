@@ -3,6 +3,8 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/components/shared/theme-provider";
 import NextTopLoader from "nextjs-toploader";
+import { Toaster } from "@/components/ui/sonner";
+import { QueryProvider } from "@/components/shared/query-provider";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -48,7 +50,16 @@ export default function RootLayout({
             speed={200}
             shadow='0 0 10px #84cc22,0 0 5px #84cc22'
           />
-          {children}
+          <QueryProvider>{children}</QueryProvider>
+          <Toaster
+            richColors
+            position='bottom-right'
+            toastOptions={{
+              style: { fontFamily: "var(--font-geist-sans)" },
+              className:
+                "border-border/60 bg-popover/95 backdrop-blur-md text-sm",
+            }}
+          />
         </ThemeProvider>
       </body>
     </html>

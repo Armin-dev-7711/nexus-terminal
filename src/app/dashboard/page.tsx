@@ -9,7 +9,5 @@ export const metadata: Metadata = {
 };
 
 export default async function DashboardPage() {
-  await new Promise((resolve) => setTimeout(resolve, 800));
-
   return <DashboardClientRoot />;
 }

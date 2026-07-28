@@ -1,22 +1,44 @@
-// مسیر: src/features/billing/components/PricingSection.tsx
+// src/features/billing/components/PricingSection.tsx
 "use client";
 
 import * as React from "react";
+import { useSearchParams } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
-
-import { usePricingPlan } from "../hooks/usePricingPlan";
+import { toast } from "sonner";
 
 import { PricingCard } from "@/features/landing/components/pricing/PricingCard";
 import { OPERATIONAL_PLANS } from "@/features/landing/constants/pricing.data";
 import { usePricingState } from "@/features/landing/hooks/usePricingState";
+import { useSubscriptionCheckout } from "../hooks/useSubscriptionCheckout";
 
 export function PricingSection() {
-  const { isPending, handleUpgrade } = usePricingPlan();
+  const searchParams = useSearchParams();
+  const {
+    userPlan,
+    loadingPlanId,
+    handleSubscribe,
+    handleManageSubscription,
+  } = useSubscriptionCheckout();
 
   // Use landing engine to control monthly/annual toggle
   const { billingPeriod, currency, toggleBilling, calculatePrice } =
     usePricingState();
+
+  // 🚀 Display notification for Stripe purchase success or cancellation
+  React.useEffect(() => {
+    if (searchParams.get("success") === "true") {
+      const planName = searchParams.get("plan") || "new subscription";
+      toast.success("Payment completed successfully 🎉", {
+        description: `The ${planName.toUpperCase()} plan has been successfully activated for your account.`,
+        duration: 6000,
+      });
+    } else if (searchParams.get("canceled") === "true") {
+      toast.info("Payment process canceled", {
+        description: "No funds were deducted from your account. You can try again anytime.",
+      });
+    }
+  }, [searchParams]);
 
   return (
     <div className='space-y-8 pt-6 relative'>
@@ -55,8 +77,8 @@ export function PricingSection() {
 
       <div className='grid grid-cols-1 xl:grid-cols-3 gap-6 w-full items-center relative z-10 mt-8'>
         {OPERATIONAL_PLANS.map((plan) => {
-          // Here for simulation we assume the user is on the Explorer plan
-          const isActive = plan.id === "explorer";
+          const isActive = userPlan === plan.id;
+          const isLoading = loadingPlanId === plan.id;
 
           return (
             <PricingCard
@@ -65,10 +87,13 @@ export function PricingSection() {
               billingPeriod={billingPeriod}
               currency={currency}
               calculatePrice={calculatePrice}
-              // Pass dashboard states to the card
               isActive={isActive}
-              isLoading={isPending && !isActive}
-              onAction={() => handleUpgrade(plan.name)}
+              isLoading={isLoading}
+              onAction={() =>
+                isActive
+                  ? handleManageSubscription()
+                  : handleSubscribe(plan.id, billingPeriod)
+              }
             />
           );
         })}
@@ -76,3 +101,4 @@ export function PricingSection() {
     </div>
   );
 }
+

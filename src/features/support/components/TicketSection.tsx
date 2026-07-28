@@ -27,7 +27,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { SupportTicket, SupportCategory } from "../types";
-import { useTickets } from "../hooks/useTickets";
+import { useTicketsData, useCreateTicket } from "../hooks/useTickets";
 
 function RefreshCwIcon(props: React.SVGProps<SVGSVGElement>) {
   return (
@@ -74,20 +74,28 @@ const getStatusBadge = (status: SupportTicket["status"]) => {
   }
 };
 
-interface TicketSectionProps {
-  initialTickets: SupportTicket[];
-}
+export function TicketSection() {
+  const [subject, setSubject] = React.useState("");
+  const [category, setCategory] = React.useState<SupportCategory>("node_execution");
 
-export function TicketSection({ initialTickets }: TicketSectionProps) {
-  const {
-    tickets,
-    subject,
-    setSubject,
-    category,
-    setCategory,
-    isPending,
-    handleSubmit,
-  } = useTickets(initialTickets);
+  const { data: tickets = [], isLoading } = useTicketsData();
+  const createTicketMutation = useCreateTicket();
+
+  const isPending = createTicketMutation.isPending;
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!subject.trim()) return;
+
+    createTicketMutation.mutate(
+      { subject, category },
+      {
+        onSuccess: () => {
+          setSubject("");
+        },
+      }
+    );
+  };
 
   return (
     <div className='grid grid-cols-1 lg:grid-cols-5 gap-6'>
@@ -206,7 +214,7 @@ export function TicketSection({ initialTickets }: TicketSectionProps) {
                   <div className='min-w-0 space-y-1'>
                     <div className='flex items-center gap-2 flex-wrap'>
                       <span className=' text-[10px] font-bold text-primary'>
-                        {t.id}
+                        {t.ticketId || t.id}
                       </span>
                       <span className='text-[9px]  uppercase text-muted-foreground/60 tracking-wider'>
                         [{t.category.replace("_", " ")}]

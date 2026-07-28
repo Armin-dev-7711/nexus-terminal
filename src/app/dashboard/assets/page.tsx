@@ -9,7 +9,5 @@ export const metadata: Metadata = {
 };
 
 export default async function AssetsPage() {
-  await new Promise((resolve) => setTimeout(resolve, 800));
-
   return <AssetsClientRoot />;
 }

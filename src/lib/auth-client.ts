@@ -5,10 +5,12 @@ import type { auth } from "./auth";
 
 export const authClient = createAuthClient({
   baseURL:
-    process.env.NEXT_PUBLIC_APP_URL ||
-    (process.env.NODE_ENV === "production"
-      ? "https://nexus-terminal-two-iota.vercel.app"
-      : "http://localhost:3000"),
+    typeof window !== "undefined"
+      ? window.location.origin
+      : process.env.NEXT_PUBLIC_APP_URL ||
+        (process.env.NODE_ENV === "production"
+          ? "https://nexus-terminal-two-iota.vercel.app"
+          : "http://localhost:3000"),
   plugins: [inferAdditionalFields<typeof auth>()],
 });
 

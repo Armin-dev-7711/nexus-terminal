@@ -106,7 +106,11 @@ export const auth = betterAuth({
       },
     },
   },
-  baseURL: process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000",
+  baseURL:
+    process.env.NEXT_PUBLIC_APP_URL ||
+    (process.env.NODE_ENV === "production"
+      ? "https://nexus-terminal-two-iota.vercel.app"
+      : "http://localhost:3000"),
   trustedOrigins: [
     "http://localhost:3000",
     "https://nexus-terminal-two-iota.vercel.app",

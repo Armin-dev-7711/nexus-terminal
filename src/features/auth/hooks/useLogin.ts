@@ -266,10 +266,16 @@ export function useLogin() {
 
     setOauthLoading(provider);
     try {
-      await authClient.signIn.social({
+      const res = await authClient.signIn.social({
         provider,
-        callbackURL: callbackUrl, // 🚀 هدایت هوشمند پس از ورود با شبکه اجتماعی
+        callbackURL: callbackUrl,
       });
+      if (res?.error) {
+        toast.error("OAuth Matrix Failed", {
+          description: res.error.message || `Failed to establish secure handshake with ${provider}.`,
+        });
+        setOauthLoading(null);
+      }
     } catch (error) {
       toast.error("OAuth Matrix Failed", {
         description: `Failed to establish secure handshake with ${provider}.`,

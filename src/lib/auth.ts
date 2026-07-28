@@ -107,13 +107,23 @@ export const auth = betterAuth({
     },
   },
   baseURL:
+    process.env.BETTER_AUTH_URL ||
     process.env.NEXT_PUBLIC_APP_URL ||
-    (process.env.NODE_ENV === "production"
-      ? "https://nexus-terminal-two-iota.vercel.app"
-      : "http://localhost:3000"),
+    (process.env.VERCEL_PROJECT_PRODUCTION_URL
+      ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`
+      : process.env.VERCEL_URL
+        ? `https://${process.env.VERCEL_URL}`
+        : process.env.NODE_ENV === "production"
+          ? "https://nexus-terminal-7711.vercel.app"
+          : "http://localhost:3000"),
   trustedOrigins: [
     "http://localhost:3000",
+    "https://nexus-terminal-7711.vercel.app",
     "https://nexus-terminal-two-iota.vercel.app",
+    ...(process.env.VERCEL_URL ? [`https://${process.env.VERCEL_URL}`] : []),
+    ...(process.env.VERCEL_PROJECT_PRODUCTION_URL
+      ? [`https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`]
+      : []),
   ],
   emailAndPassword: {
     enabled: true,

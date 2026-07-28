@@ -9,7 +9,7 @@ export const authClient = createAuthClient({
       ? window.location.origin
       : process.env.NEXT_PUBLIC_APP_URL ||
         (process.env.NODE_ENV === "production"
-          ? "https://nexus-terminal-two-iota.vercel.app"
+          ? "https://nexus-terminal-7711.vercel.app"
           : "http://localhost:3000"),
   plugins: [inferAdditionalFields<typeof auth>()],
 });
